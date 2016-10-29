@@ -1,6 +1,7 @@
 ENTITIES=ut_syndrome uc_syndrome syndrome
 VCDDIR=vcd
 WORKDIR=work
+.NOTPARALLEL:
 
 
 all: $(patsubst %,%_test.vcd,${ENTITIES})
