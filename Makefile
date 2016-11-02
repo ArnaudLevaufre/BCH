@@ -18,4 +18,3 @@ all: $(patsubst %,%_test.vcd,${ENTITIES})
 clean:
 	rm -f *.o $(VCDDIR)/*.vcd $(WORKDIR)/*
 
-
