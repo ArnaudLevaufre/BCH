@@ -1,0 +1,145 @@
+
+add wave -r /*
+
+
+force -freeze sim:/corrector/RAZ 1 10
+force -freeze sim:/corrector/RAZ 0 140
+force -freeze sim:/corrector/clk 1 0, 0 {50 ps} -r 100
+force -freeze sim:/corrector/P1 00000 0
+force -freeze sim:/corrector/P2 01000 0
+force -freeze sim:/corrector/D_out 10110011001100110011001100110001 0
+force -freeze sim:/corrector/LD_BUF 1 10
+force -freeze sim:/corrector/LD_BUF 0 140
+force -freeze sim:/corrector/DEC_BUF 0 10
+force -freeze sim:/corrector/DEC_BUF 1 160
+force -freeze sim:/corrector/LD_CORR 0 0
+force -freeze sim:/corrector/LD_CORR 1 160
+force -freeze sim:/corrector/Err 01 0
+
+run 3000
+
+
+add wave sim:/global_corrector/*
+add wave  \
+sim:/global_corrector/corr/muxCorrSel \
+sim:/global_corrector/corr/D_mem \
+sim:/global_corrector/corr/BUFOut \
+sim:/global_corrector/corr/MSG_CORROut
+add wave  \
+sim:/global_corrector/me_corr/etat_cr \
+sim:/global_corrector/me_corr/etat_sv
+
+force -freeze sim:/global_corrector/clk 1 0, 0 {50 ps} -r 100
+force -freeze sim:/global_corrector/reset 1 10
+force -freeze sim:/global_corrector/reset 0 140
+force -freeze sim:/global_corrector/start_corr 0 0
+force -freeze sim:/global_corrector/start_corr 1 260
+force -freeze sim:/global_corrector/start_corr 0 390
+force -freeze sim:/global_corrector/P1 00000 0
+force -freeze sim:/global_corrector/P2 01000 0
+force -freeze sim:/global_corrector/D_out 10110011001100110011001100110001 0
+force -freeze sim:/global_corrector/Err 01 0
+
+run 3000
+
+
+/*
+------------------------
+--			Comparateur					--
+------------------------
+
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+ 
+entity comparateur is
+port(A,B  :in std_logic_vector(4 downto 0);
+    equal :out std_logic);
+end comparateur;
+ 
+architecture arch_comparateur of comparateur is
+signal intern : unsigned (4 downto 0);
+begin
+    intern <= unsigned(A)-unsigned(B);
+    equal<='1' when intern="00000" else '0';
+end arch_comparateur;
+
+
+
+
+
+---------------------
+--			Compteur_5b					--
+---------------------
+
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity compteur_5b is
+  port( clk,raz : in std_logic;
+    cpt : out std_logic_vector(4 downto 0));
+end compteur_5b;
+
+architecture arch_compteur_5b of compteur_5b is
+signal cpt_intern : unsigned (4 downto 0);
+begin
+    	process(clk)
+        begin
+          if rising_edge(clk) then
+              if raz='1' then cpt_intern <= (others => '0');
+              elsif cpt_intern ="11111" then cpt_intern <= (others => '0');
+    				      else cpt_intern <= cpt_intern + 1; -- "+"
+ 				      end if;
+          end if;
+
+	end process;
+
+	cpt <= std_logic_vector(cpt_intern); -- count copie de count_int
+
+end arch_compteur_5b;
+
+
+---------------------------------------------
+--          MULTIPLEXEUR A 2 VOIES         --
+---------------------------------------------
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity mux_2 is
+  port( sel, e_0, e_1 : in std_logic;
+        s : out std_logic;
+end mux_2;
+
+architecture arch_mux_2 of mux_2 is
+begin
+
+  s <=  e_1 when sel='1' else
+        e_0;
+
+end arch_mux_2;
+
+---------------------------------------------
+--             OR Logical gate             --
+---------------------------------------------
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity or_gate is
+  port( e_0, e_1 : in std_logic;
+        s : out std_logic;
+end or_gate;
+
+architecture arch_or_gate of or_gate is
+begin
+
+  s <=  e_1 or e_0;
+
+end arch_or_gate;
+
+*/
