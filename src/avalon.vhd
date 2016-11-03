@@ -29,7 +29,6 @@ architecture arch_avalon of avalon is
     signal in_words: unsigned(1 downto 0);
     signal FifoIn, in_FifoOut: std_logic_vector(31 downto 0);
     signal WrFifo, RdFifo: std_logic;
-    signal FifoLevel: std_logic_vector(2 downto 0);
 begin
     in_fifo: entity FIFO generic map(DATA_WIDTH => 32, FIFO_SIZE => 2) port map (
         clk => clk,
@@ -38,7 +37,6 @@ begin
         RdFifo => RdFifo,
 	    DataIn => FifoIn,
 	    DataOut => in_FifoOut,
-	    FifoLevel => FifoLevel,
 	    FifoEmpty => in_empty,
         FifoFull => in_full
     );
@@ -83,7 +81,7 @@ begin
     irq <= in_irq;
     D_out <= (0 => in_irq, 1 => in_empty, 2 => in_full, others => '0') when r = '1' and unsigned(addr) = 0 else
              (0 => in_decode, 1 => in_irqEn, others => '0') when r = '1' and unsigned(addr) = 1 else
-              in_FifoOut when unsigned(addr) = 2;
+              in_FifoOut when unsigned(addr) = 2 else (others => '0');
 end arch_avalon;
 
 library IEEE;

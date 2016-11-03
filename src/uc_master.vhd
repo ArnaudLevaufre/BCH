@@ -10,7 +10,7 @@ entity uc_master is
         nb_words: in unsigned(1 downto 0);
         start_syndrome, start_lut, start_corr: out std_logic;
         end_syndrome, end_lut, end_corr: in std_logic;
-        ask_irq, raz_err, r_fifo, w_fifo, corr_out_ld: out std_logic
+        ask_irq, raz_err, corr_out_ld: out std_logic
     );
 end uc_master;
 
@@ -30,7 +30,7 @@ begin
         end if;
     end process;
 
-    process(current_state, decode, end_syndrome, end_lut, end_corr)
+    process(clk, current_state, decode, end_syndrome, end_lut, end_corr, syndrome, nb_words, nb_processed)
     begin
         raz_err <= '0';
         start_syndrome <= '0';
@@ -40,10 +40,24 @@ begin
         corr_out_ld <= '0';
 
         next_state <= current_state;
+
+        if rising_edge(clk) then
+            case current_state is
+                when REPOS =>
+                    if decode = '1' then
+                        nb_processed <= "00";
+                    end if;
+                when CORR =>
+                    if end_corr = '1' then
+                        nb_processed <= std_logic_vector(unsigned(nb_processed) + 1);
+                    end if;
+                when SYN =>
+                when LUT =>
+            end case;
+        end if;
         case current_state is
             when REPOS =>
                 if decode = '1' then
-                    nb_processed <= "00";
                     next_state <= SYN;
                     start_syndrome <= '1';
                 end if;
@@ -66,7 +80,6 @@ begin
                 end if;
             when CORR =>
                 if end_corr = '1' then
-                    nb_processed <= std_logic_vector(unsigned(nb_processed) + 1);
                     if to_integer(unsigned(nb_processed)) = to_integer(nb_words - 1) then
                         ask_irq <= '1';
                         next_state <= REPOS;
@@ -126,13 +139,13 @@ begin
         raz <= '0';
 
         decode <= '1';
-        wait for 39 ns;
+        wait for 40 ns;
         decode <= '0';
         assert start_syndrome = '1';
-        wait for 41 ns;
+        wait for 40 ns;
 
         end_syndrome <= '1';
-        wait for 39 ns;
+        wait for 41 ns;
         assert start_corr <= '1'; -- Since syndrome == 0, skip lut
         end_syndrome <= '0';
         wait for 40 ns;
@@ -144,18 +157,21 @@ begin
         wait for 80 ns;
         assert start_syndrome = '1';
         end_syndrome <= '1';
-        wait for 40 ns;
-        end_syndrome <= '0';
+        wait for 20 ns;
         assert start_lut = '1';
+        wait for 20 ns;
+        end_syndrome <= '0';
         wait for 40 ns;
         end_lut <= '1';
-        wait for 40 ns;
-        end_lut <= '0';
+        wait for 20 ns;
         assert start_corr = '1';
+        wait for 20 ns;
+        end_lut <= '0';
         wait for 40 ns;
         end_corr <= '1';
-        wait for 40 ns;
+        wait for 20 ns;
         assert ask_irq = '1';
+        wait for 20 ns;
         end_corr <= '0';
         wait for 40 ns;
 

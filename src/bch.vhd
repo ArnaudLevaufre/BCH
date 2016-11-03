@@ -26,7 +26,6 @@ architecture arch_bch of bch is
     signal P1: std_logic_vector(4 downto 0) := (others => '0');
     signal P2: std_logic_vector(4 downto 0) := (others => '0');
     signal ERR: std_logic_vector(1 downto 0);
-    signal wrfifo, rfifo, in_r, in_w: std_logic;
 begin
     comp_avalon: entity avalon port map(
         clk => clk,
@@ -64,8 +63,6 @@ begin
 
         ask_irq => ask_irq,
         raz_err => raz_err,
-        r_fifo => in_r,
-        w_fifo => in_w,
         corr_out_ld => corr_out_ld
     );
 
