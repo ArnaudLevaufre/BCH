@@ -163,10 +163,14 @@ begin
         wait until irq = '0';
         r <= '1';
         addr <= (1 => '1', others => '0');
+        wait for 1 ns;
+        assert D_out = X"030E0E56";
         wait for 40 ns;
+        assert D_out = X"020E1C57";
         wait for 40 ns;
+        assert D_out = X"010E1C57";
         wait for 40 ns;
-        wait for 40 ns;
+        assert D_out = X"000E1C57";
 
         finish <= '1';
         wait;
