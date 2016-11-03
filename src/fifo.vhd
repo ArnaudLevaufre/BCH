@@ -21,7 +21,8 @@ end entity FIFO;
 
 architecture rtl of FIFO is
 	signal adrFifo : integer range 0 to 2**FIFO_SIZE;
-	type memory is array(0 to 2**FIFO_SIZE-1) of std_logic_vector(DATA_WIDTH-1 downto 0);
+    constant MEMORY_SIZE: integer := 2**FIFO_SIZE - 1; -- XXX: This might be a problem for synthetization.
+	type memory is array(0 to MEMORY_SIZE) of std_logic_vector(DATA_WIDTH-1 downto 0);
 	signal Fifo : memory;
 begin
     process(clk)
@@ -40,13 +41,13 @@ begin
                         end if;
 	                when "01" =>
 	                    if adrFifo > 0 then
-	                        for i in 1 to 2**FIFO_SIZE-1 loop
+	                        for i in 1 to MEMORY_SIZE loop
 	                            Fifo(i-1) <= Fifo(i);
 	                        end loop;
 	                        adrFifo <= adrFifo-1;
 	                    end if  ;
 	                when "11" =>
-	                    for i in 1 to 2**FIFO_SIZE-1 loop
+	                    for i in 1 to MEMORY_SIZE loop
 	                        Fifo(i-1) <= Fifo(i);
 	                    end loop;
 	                    Fifo(adrFifo-1) <= DataIn;
