@@ -16,8 +16,10 @@ architecture arch_uc_corr of uc_corr is
 begin
     process(clk, reset)
         begin
-          if reset='1' then etat_cr <= Repos;
-          elsif rising_edge(clk) then etat_cr <= etat_sv;
+            if reset='1' then
+                etat_cr <= Repos;
+            elsif rising_edge(clk) then
+                etat_cr <= etat_sv;
           end if;
     end process;
 
@@ -32,9 +34,9 @@ begin
 
         case etat_cr is
             when Repos =>
+                RAZ <= '1';
                 if start_corr = '1' then
                     etat_sv <= Decalage;
-                    RAZ <= '1';
                     LD_BUF <= '1';
                 end if;
             when Decalage =>

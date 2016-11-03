@@ -14,13 +14,13 @@ entity ut_corr is
 end entity ut_corr;
 
 architecture arch_ut_corr of ut_corr is
-    signal cpt_intern : std_logic_vector (4 downto 0);
-    signal comp1Out,comp2Out : std_logic;
-    signal mux1Out,mux2Out : std_logic;
-    signal muxCorrSel,muxCorrOut : std_logic;
-    signal D_mem : std_logic_vector(31 downto 0);
-    signal BUFOut : std_logic;
-    signal MSG_CORROut : std_logic_vector(20 downto 0);
+    signal cpt_intern: std_logic_vector (4 downto 0) := (others => '0');
+    signal comp1Out, comp2Out: std_logic;
+    signal mux1Out, mux2Out: std_logic;
+    signal muxCorrSel, muxCorrOut: std_logic;
+    signal D_mem: std_logic_vector(31 downto 0);
+    signal BUFOut: std_logic;
+    signal MSG_CORROut: std_logic_vector(20 downto 0);
 begin
     process(clk)
       begin

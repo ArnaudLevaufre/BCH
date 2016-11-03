@@ -130,19 +130,19 @@ begin
         decode <= '0';
         assert start_syndrome = '1';
         wait for 41 ns;
-        assert start_syndrome = '0';
 
         end_syndrome <= '1';
         wait for 39 ns;
         assert start_corr <= '1'; -- Since syndrome == 0, skip lut
         end_syndrome <= '0';
         wait for 40 ns;
+        assert start_syndrome = '0';
         end_corr <= '1';
         wait for 40 ns;
         end_corr <= '0';
-        assert start_syndrome = '1';
         syndrome <= "0000000001";
         wait for 80 ns;
+        assert start_syndrome = '1';
         end_syndrome <= '1';
         wait for 40 ns;
         end_syndrome <= '0';

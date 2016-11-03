@@ -23,7 +23,8 @@ architecture arch_bch of bch is
     signal corr_out, FifoOut: std_logic_vector(31 downto 0);
     signal in_syndrome: std_logic_vector(9 downto 0);
     signal clear, ld_syn_buf, calc: std_logic;
-    signal P1, P2: std_logic_vector(4 downto 0);
+    signal P1: std_logic_vector(4 downto 0) := (others => '0');
+    signal P2: std_logic_vector(4 downto 0) := (others => '0');
     signal ERR: std_logic_vector(1 downto 0);
     signal wrfifo, rfifo, in_r, in_w: std_logic;
 begin

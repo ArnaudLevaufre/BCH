@@ -46,7 +46,8 @@ architecture arch_ut_lut of ut_lut is
                             "1001011011");
     signal S1, S2: std_logic_vector(9 downto 0);
     signal S1xS2: std_logic_vector(9 downto 0);
-    signal R_P1, R_P2: std_logic_vector(4 downto 0) := (others => '0');
+    signal R_P1: std_logic_vector(4 downto 0) := (others => '0');
+    signal R_P2: std_logic_vector(4 downto 0) := (others => '0');
     signal R_SYNDROME: std_logic_vector(9 downto 0);
 begin
     process(clk)
@@ -54,14 +55,13 @@ begin
         if rising_edge(clk) then
             if INC_P1 = '1' then
                 R_P1 <= std_logic_vector(unsigned(R_P1) + 1);
-            elsif INC_P2 = '1' then
+            end if;
+            if INC_P2 = '1' then
                 R_P2 <= std_logic_vector(unsigned(R_P2) + 1);
             end if;
-
             if LD_SYNDROME = '1' then
                 R_SYNDROME <= SYNDROME;
             end if;
-
             if RAZ = '1' then
                 R_P1 <= (others => '0');
             end if;
