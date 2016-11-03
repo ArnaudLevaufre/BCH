@@ -1,0 +1,216 @@
+\documentclass[a4paper, 11pt, svgnames]{report}
+\usepackage[margin=3cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{hyperref}
+\usepackage[toc,acronym,nopostdot]{glossaries}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{minted}
+\usepackage{mathtools}
+\usepackage[toc, page]{appendix}
+\usepackage{subcaption}
+\usepackage{rotating}
+\usepackage{pst-circ}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.spaced ,automata, snakes, circuits.logic.US, calc}
+
+\tikzstyle{block} = [draw]
+\tikzstyle{asyncblock} = [draw]
+
+
+\input{./components.tex}
+%
+% Glossaries
+%
+
+\makeglossaries
+
+%
+% Document
+%
+
+\title{Décodeur BCH}
+\author{Ronan~\bsc{Le Guillou} \and Arnaud~\bsc{Levaufre} \and Bastien~\bsc{Orivel}}
+
+\begin{document}
+    \maketitle
+    \tableofcontents
+    \printglossaries
+    \listoffigures
+    \listoftables
+
+    \chapter{Introduction}
+
+    \chapter{Étude du circuit}
+        \section{Architecture globale}
+
+
+        \section{Calcul du syndrome}
+            \subsection{Unité de traitement}
+
+            \begin{figure}[H]
+                \begin{tikzpicture}[>=stealth,scale=0.375, every node/.style={scale=0.5}, circuit logic US]
+                    %\draw[help lines] (0, 0) grid (29, 32);
+
+                    \node[shape=dff] at (12, 30) (dff0) {0};
+                    \node[shape=dff] at (12, 27) (dff1) {1};
+                    \node[shape=dff] at (12, 24) (dff2) {2};
+                    \node[shape=dff] at (12, 21) (dff3) {3};
+                    \node[shape=dff] at (12, 18) (dff4) {4};
+                    \node[shape=dff] at (12, 15) (dff5) {5};
+                    \node[shape=dff] at (12, 12) (dff6) {6};
+                    \node[shape=dff] at (12, 9) (dff7) {7};
+                    \node[shape=dff] at (12, 6) (dff8) {8};
+                    \node[shape=dff] at (12, 3) (dff9) {9};
+
+                    \node[circle,draw,fill=black,scale=0.3] at (7,24)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (9,24)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (9, 18)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (9, 15)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (9, 9)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (9, 6)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 28.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 28.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 25.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 22.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 19.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 16.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 13.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 10.7)  {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 7.7)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 4.7)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10.5, 1.7)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 31.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 28.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 25.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 22.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 19.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 16.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 13.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 10.3)   {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 7.3)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (10, 4.3)    {};
+
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 30.5)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 27.5)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 24.5)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 21.5)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 18.5)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 15.5)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 12.5)    {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 9.5)     {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 6.5)     {};
+                    \node[circle,draw,fill=black,scale=0.3] at (13, 3.5)     {};
+
+                    \node[xor gate, rotate=-90, scale=1.5] at (9.5, 22) (x3) {};
+                    \node[xor gate, rotate=-90, scale=1.5] at (9.5, 16) (x5) {};
+                    \node[xor gate, rotate=-90, scale=1.5] at (9.5, 13) (x6) {};
+                    \node[xor gate, rotate=-90, scale=1.5] at (9.5, 7) (x8) {};
+                    \node[xor gate, rotate=-90, scale=1.5] at (9.5, 4) (x9) {};
+                    \node[xor gate, rotate=90, scale=1.5] at (8, 28) (x10) {};
+
+                    \node[shape=srr] at (5, 24) (synbuff) {};
+
+                    \node[left] at (0, 26) (data) {Data $[~31:0~]$};
+                    \node[left] at (0, 25) (ld) {Ld};
+                    \node[left] at (0, 24) (calc) {Calc};
+                    \node[right] at (19, 31.5) (syndrome) {Syndrome $[~9:0~]$};
+                    \node[left] at (0, 23) (clear) {Clear} ;
+
+                    \draw [->, double] (data) -- (2.5, 26) |- (synbuff.Din);
+                    \draw [->] (ld) -- (2, 25) |- (synbuff.Ld);
+
+                    \draw [->] (synbuff.Dout) -|  (7, 26) -| (x10.input 1);
+                    \draw [->] (synbuff.Dout) -- (9, 24) -| (x3.input 2);
+                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 18) -| (x5.input 2);
+                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 15) -| (x6.input 2);
+                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 9) -| (x8.input 2);
+                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 6) -| (x9.input 2);
+
+                    \draw [->] (x10.output) |- (dff0.D);
+                    \draw [->] (x9.output) |- (dff9.D);
+                    \draw [->] (x8.output) |- (dff8.D);
+                    \draw [->] (x6.output) |- (dff6.D);
+                    \draw [->] (x5.output) |- (dff5.D);
+                    \draw [->] (x3.output) |- (dff3.D);
+
+                    \draw [->] (dff0.Q) -| (13, 28.5) -- (11, 28.5) |- (dff1.D);
+                    \draw [->] (dff1.Q) -| (13, 25.5) -- (11, 25.5) |- (dff2.D);
+                    \draw [->] (dff2.Q) -| (13, 22.5) -- (13, 22.5) -| (x3.input 1);
+                    \draw [->] (dff3.Q) -| (13, 19.5) -- (11, 19.5) |- (dff4.D);
+                    \draw [->] (dff4.Q) -| (13, 16.5) -- (13, 16.5) -| (x5.input 1);
+                    \draw [->] (dff5.Q) -| (13, 13.5) -- (13, 13.5) -| (x6.input 1);
+                    \draw [->] (dff6.Q) -| (13, 10.5) -- (11, 10.5) |- (dff7.D);
+                    \draw [->] (dff7.Q) -| (13, 7.5) -- (13, 7.5) -| (x8.input 1);
+                    \draw [->] (dff8.Q) -| (13, 4.5) -- (13, 4.5) -| (x9.input 1);
+                    \draw [->] (dff9.Q) -| (13, 1.5) -- (11, 1.5) -| (x10.input 2);
+
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 28.7) -| (dff0.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 25.7) -| (dff1.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 22.7) -| (dff2.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 19.7) -| (dff3.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 16.7) -| (dff4.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 13.7) -| (dff5.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 10.7) -| (dff6.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 7.7) -| (dff7.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 4.7) -| (dff8.S);
+                    \draw [->] (calc) -- (2, 24) -- (2, 21) -- (10.5, 21) -- (10.5, 1.7) -| (dff9.S);
+
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 31.3) -| (dff0.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 28.3) -| (dff1.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 25.3) -| (dff2.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 22.3) -| (dff3.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 19.3) -| (dff4.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 16.3) -| (dff5.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 13.3) -| (dff6.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 10.3) -| (dff7.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 7.3) -| (dff8.R);
+                    \draw [->] (clear) -- (1, 23) -- (1, 20) -- (10, 20) -- (10, 4.3) -| (dff9.R);
+
+                    \draw [->] (dff0.Q) -- (18, 30.5) node [above left](b0) {0};
+                    \draw [->] (dff1.Q) -- (18, 27.5) node [above left](b1) {1};
+                    \draw [->] (dff2.Q) -- (18, 24.5) node [above left](b2) {2};
+                    \draw [->] (dff3.Q) -- (18, 21.5) node [above left](b3) {3};
+                    \draw [->] (dff4.Q) -- (18, 18.5) node [above left](b4) {4};
+                    \draw [->] (dff5.Q) -- (18, 15.5) node [above left](b5) {5};
+                    \draw [->] (dff6.Q) -- (18, 12.5) node [above left](b6) {6};
+                    \draw [->] (dff7.Q) -- (18, 9.5) node [above left](b7) {7};
+                    \draw [->] (dff8.Q) -- (18, 6.5) node [above left](b8) {8};
+                    \draw [->] (dff9.Q) -- (18, 3.5) node [above left](b9) {9};
+                    \draw [->, double] (18, 3.5) |- (syndrome);
+
+                \end{tikzpicture}
+                \caption{Unité de traitement pour le calcul du syndrome}
+            \end{figure}
+
+            \subsection{Unité de contrôle}
+
+            \begin{figure}[H]
+                \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm]
+                    \tikzstyle{every initial by arrow} = [text=red, -, draw=red, decorate, decoration=zigzag]
+                    \node[state,accepting, initial, initial text=reset](E1){Repos};
+                    \node[state](E2)[below of=E1]{Dec\_syn};
+
+                    \path[->] (E1) edge [loop right] node {!start\_syndrome} (E1);
+                    \path[->] (E1) edge node {start\_syndrome / ld\_syn\_buff, clear, syn\_dcpt=30} (E2);
+                    \path[->] (E2) edge [loop right] node {syn\_dcpt != 0 / calc, syn\_dcpt -= 1} (E2);
+                    \path[->] (E2) edge [bend left] node {syn\_dcpt == 0 / end\_syndrome} (E1);
+
+                \end{tikzpicture}
+                \caption{Machine à état utilisée pour le calcul du syndrome}
+            \end{figure}
+
+        \section{Look up table}
+        \section{Correcteur}
+
+    \begin{thebibliography}{99}
+        %\bibitem{openlayers} Openlayers, \url{http://openlayers.org/}
+    \end{thebibliography}
+
+    \begin{appendices}
+    \end{appendices}
+
+\end{document}
