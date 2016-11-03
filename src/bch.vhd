@@ -30,7 +30,7 @@ begin
         raz => raz,
 
         r => r,
-        w => r,
+        w => w,
         D_in => D_in,
         D_out => D_out,
         addr => addr,
