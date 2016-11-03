@@ -171,6 +171,10 @@ begin
         assert D_out = X"010E1C57";
         wait for 40 ns;
         assert D_out = X"000E1C57";
+        wait for 40 ns;
+        addr <= (others => '0');
+        wait for 40 ns;
+        assert irq = '1';
 
         finish <= '1';
         wait;

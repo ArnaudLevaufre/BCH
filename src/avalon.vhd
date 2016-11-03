@@ -51,6 +51,10 @@ begin
                 in_decode <= '0';
                 in_irqen <= '0';
                 in_irq <= '1';
+            elsif r = '1' then
+                if unsigned(addr) = 0 then
+                    in_irq <= '1';
+                end if;
             elsif w = '1' then
                 if unsigned(addr) = 1 then
                     in_decode <= D_in(0);
