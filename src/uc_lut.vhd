@@ -7,17 +7,20 @@ entity uc_lut is
         end_lut, RAZ, RAZ_P2, LD_SYNDROME, INC_P1, INC_P2, LD_ERR: out std_logic;
         ERR: out std_logic_vector(1 downto 0);
         start_lut, P1_MAX, P2_MAX, ERR1, ERR2: in std_logic;
-        clk: in std_logic
+        clk: in std_logic;
+        reset: in std_logic
     );
 end entity;
 
 architecture arch_uc_lut of uc_lut is
-    type state is (REPOS, LUT);
+    type state is (IDLE, LUT);
     signal current_state, next_state: state;
 begin
-    process(clk)
+    process(clk, reset)
     begin
-        if rising_edge(clk) then
+        if reset = '1' then
+            current_state <= IDLE;
+        elsif rising_edge(clk) then
             current_state <= next_state;
         end if;
     end process;
@@ -35,7 +38,7 @@ begin
         end_lut <= '0';
 
         case current_state is
-            when REPOS =>
+            when IDLE =>
                 if start_lut = '1' then
                     next_state <= LUT;
                     RAZ <= '1';
@@ -48,17 +51,17 @@ begin
                     RAZ_P2 <= '1';
                 elsif ERR1 = '1' then
                     end_lut <= '1';
-                    next_state <= REPOS;
+                    next_state <= IDLE;
                     LD_ERR <= '1';
                     ERR <= "01";
                 elsif ERR2 = '1' then
                     end_lut <= '1';
-                    next_state <= REPOS;
+                    next_state <= IDLE;
                     LD_ERR <= '1';
                     ERR <= "10";
                 elsif P1_MAX = '1' then
                     end_lut <= '1';
-                    next_state <= REPOS;
+                    next_state <= IDLE;
                     LD_ERR <= '1';
                     ERR <= "11";
                 elsif P1_MAX = '0' or P2_MAX = '0' then
@@ -82,7 +85,7 @@ architecture behavior of uc_lut_test is
         end_lut, RAZ, RAZ_P2, LD_SYNDROME, INC_P1, INC_P2, LD_ERR: out std_logic;
         ERR: out std_logic_vector(1 downto 0);
         start_lut, P1_MAX, P2_MAX, ERR1, ERR2: in std_logic;
-        clk: in std_logic
+        reset, clk: in std_logic
     );
     end component;
     signal end_lut, RAZ, RAZ_P2, LD_SYNDROME, INC_P1, INC_P2, LD_ERR: std_logic;
@@ -90,10 +93,12 @@ architecture behavior of uc_lut_test is
 
     signal start_lut, P1_MAX, P2_MAX, ERR1, ERR2: std_logic;
     signal clk, finish: std_logic;
+    signal reset: std_logic;
 begin
     uut: uc_lut port map (
         start_lut => start_lut,
         end_lut => end_lut,
+        reset => reset,
         clk => clk,
         RAZ => RAZ,
         RAZ_P2 => RAZ_P2,
@@ -115,7 +120,9 @@ begin
         err2 <= '0';
         p1_max <= '0';
         p2_max <= '0';
+        reset <= '1';
         wait for 21 ns;
+        reset <= '0';
 
         start_lut <= '1';
         wait for 1 ns;

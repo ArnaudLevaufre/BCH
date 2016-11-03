@@ -1,10 +1,10 @@
-ENTITIES=ut_syndrome uc_syndrome syndrome ut_lut uc_lut lut uc_master fifo avalon
+ENTITIES=ut_syndrome uc_syndrome syndrome ut_lut uc_lut lut uc_master fifo avalon bch
 VCDDIR=vcd
 WORKDIR=work
 .NOTPARALLEL:
 
 
-all: $(patsubst %,%_test.vcd,${ENTITIES})
+all: $(patsubst %,%_test.vcd,${ENTITIES}) clean_o
 
 %_test.vcd: %_test
 	./$< --vcd=$(VCDDIR)/$@
@@ -15,6 +15,9 @@ all: $(patsubst %,%_test.vcd,${ENTITIES})
 %.o: src/%.vhd
 	ghdl -a --workdir=$(WORKDIR) $<
 
-clean:
-	rm -f *.o $(VCDDIR)/*.vcd $(WORKDIR)/*
+clean_o:
+		rm *.o
+
+clean: clean_o
+	rm -f $(VCDDIR)/*.vcd $(WORKDIR)/*
 

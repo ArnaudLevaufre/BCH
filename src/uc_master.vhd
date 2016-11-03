@@ -6,8 +6,8 @@ entity uc_master is
     port(
         clk: in std_logic;
         decode, raz: in std_logic;
-        syndrome: std_logic_vector(9 downto 0);
-        nb_words: std_logic_vector(1 downto 0);
+        syndrome: in std_logic_vector(9 downto 0);
+        nb_words: in unsigned(1 downto 0);
         start_syndrome, start_lut, start_corr: out std_logic;
         end_syndrome, end_lut, end_corr: in std_logic;
         ask_irq, raz_err: out std_logic
@@ -65,7 +65,7 @@ begin
             when CORR =>
                 if end_corr = '1' then
                     nb_processed <= std_logic_vector(unsigned(nb_processed) + 1);
-                    if to_integer(unsigned(nb_processed)) = to_integer(unsigned(nb_words) - 1) then
+                    if to_integer(unsigned(nb_processed)) = to_integer(nb_words - 1) then
                         ask_irq <= '1';
                         next_state <= REPOS;
                     else
@@ -93,7 +93,7 @@ architecture arch_uc_master_test of uc_master_test is
     signal start_lut, end_lut: std_logic;
     signal start_corr, end_corr: std_logic;
     signal syndrome: std_logic_vector(9 downto 0);
-    signal nb_words: std_logic_vector(1 downto 0);
+    signal nb_words: unsigned(1 downto 0);
     signal ask_irq, raz_err: std_logic;
 begin
     in_uc_master: entity uc_master port map(
