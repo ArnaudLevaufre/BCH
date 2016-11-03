@@ -2,6 +2,7 @@ ENTITIES=ut_syndrome uc_syndrome syndrome ut_lut uc_lut lut uc_corr ut_corr corr
 VCDDIR=vcd
 WORKDIR=work
 .NOTPARALLEL:
+.PHONY: quartus
 
 
 all: $(patsubst %,%_test.vcd,${ENTITIES}) clean_o
@@ -27,3 +28,5 @@ clean_o:
 clean: clean_o
 	rm -f $(VCDDIR)/*.vcd $(WORKDIR)/*
 
+quartus:
+		$(MAKE) -C quartus
