@@ -54,13 +54,14 @@ begin
         if rising_edge(clk) then
             if INC_P1 = '1' then
                 R_P1 <= std_logic_vector(unsigned(R_P1) + 1);
-            end if;
-            if INC_P2 = '1' then
+            elsif INC_P2 = '1' then
                 R_P2 <= std_logic_vector(unsigned(R_P2) + 1);
             end if;
+
             if LD_SYNDROME = '1' then
                 R_SYNDROME <= SYNDROME;
             end if;
+
             if RAZ = '1' then
                 R_P1 <= (others => '0');
             end if;

@@ -10,7 +10,8 @@ entity bch is
         r, w: in std_logic;
         D_in: in std_logic_vector(31 downto 0);
         D_out: out std_logic_vector(31 downto 0);
-        addr: in std_logic_vector(63 downto 0) -- TODO: Find out the right size
+        addr: in std_logic_vector(63 downto 0); -- TODO: Find out the right size
+        irq: out std_logic
     );
 end bch;
 
@@ -24,17 +25,14 @@ architecture arch_bch of bch is
     signal clear, ld_syn_buf, calc: std_logic;
     signal P1, P2: std_logic_vector(4 downto 0);
     signal ERR: std_logic_vector(1 downto 0);
-    signal Corrected: std_logic_vector(31 downto 0);
     signal wrfifo, rfifo, in_r, in_w: std_logic;
 begin
-    wrfifo <= w or in_w;
-    rfifo <= r or in_r;
     comp_avalon: entity avalon port map(
         clk => clk,
         raz => raz,
 
-        r => in_r,
-        w => wrfifo,
+        r => r,
+        w => w,
         D_in => D_in,
         D_out => D_out,
         addr => addr,
@@ -44,7 +42,8 @@ begin
         ask_irq => ask_irq,
         decode => decode,
         words => words,
-        FifoOut => FifoOut
+        FifoOut => FifoOut,
+        irq => irq
     );
 
     comp_uc_master: entity uc_master port map(
@@ -65,8 +64,8 @@ begin
         ask_irq => ask_irq,
         raz_err => raz_err,
         r_fifo => in_r,
-        w_fifo => in_w
-
+        w_fifo => in_w,
+        corr_out_ld => corr_out_ld
     );
 
     comp_syndrome: entity syndrome port map(
@@ -96,15 +95,16 @@ begin
 
     comp_corr: entity corr port map(
         clk => clk,
-        raz => raz,
+        reset => raz,
 
         start_corr => start_corr,
         end_corr => end_corr,
 
         P1 => P1,
         P2 => P2,
-        message => FifoOut,
-        D_out => Corrected
+        Err => ERR,
+        D_out => FifoOut,
+        D_CORR_OUT => corr_out
     );
 
 end arch_bch;
@@ -119,7 +119,7 @@ entity bch_test is
 end bch_test;
 
 architecture arch_bch_test of bch_test is
-    signal finish: std_logic;
+    signal finish, irq: std_logic;
     signal clk: std_logic;
     signal raz: std_logic;
     signal r, w: std_logic;
@@ -134,7 +134,8 @@ begin
         w => w,
         D_in => D_in,
         D_out => D_out,
-        addr => addr
+        addr => addr,
+        irq => irq
     );
 
     process begin
@@ -150,16 +151,22 @@ begin
         wait for 40 ns;
         D_in <= "01100011100011100000111001010111"; -- 2 errors
         wait for 40 ns;
-        D_in <= "01100011100011100010111001010111"; -- 1 error
+        D_in <= "01100011100011100000110001010111"; -- 1 error
         wait for 40 ns;
-        D_in <= "01100011100011100010110001010111"; -- 0 error
+        D_in <= "01100011100011100001110001010111"; -- 0 error
         wait for 40 ns;
         addr <= (0 => '1', others => '0');
         D_in <= (0 => '1', 1 => '1', others => '0');
         wait for 40 ns;
         w <= '0';
-        wait for 38 us;
-        wait for 38 us;
+        wait until irq = '0';
+        r <= '1';
+        addr <= (1 => '1', others => '0');
+        wait for 40 ns;
+        wait for 40 ns;
+        wait for 40 ns;
+        wait for 40 ns;
+
         finish <= '1';
         wait;
     end process;

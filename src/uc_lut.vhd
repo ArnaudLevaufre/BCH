@@ -46,7 +46,7 @@ begin
                     LD_SYNDROME <= '1';
                 end if;
             when LUT =>
-                if P2_MAX = '1' then
+                if P2_MAX = '1' and P1_MAX = '0' then
                     INC_P1 <= '1';
                     RAZ_P2 <= '1';
                 elsif ERR1 = '1' then

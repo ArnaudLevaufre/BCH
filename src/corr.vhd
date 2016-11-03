@@ -4,7 +4,8 @@ use work.all;
 
 entity corr is
     port(
-        clk, reset, start_corr : in std_logic;
+        clk, reset, start_corr: in std_logic;
+        end_corr: out std_logic;
         Err : in std_logic_vector(1 downto 0);
         P1,P2 : in std_logic_vector(4 downto 0);
         D_out : in std_logic_vector(31 downto 0);
@@ -13,7 +14,7 @@ entity corr is
 end corr;
 
 architecture arch_corr of corr is
-    signal RAZ, DEC_BUF, LD_BUF, LD_CORR, end_corr : std_logic;
+    signal RAZ, DEC_BUF, LD_BUF, LD_CORR: std_logic;
     signal CPT :  std_logic_vector(4 downto 0);
 begin
     me_corr: entity uc_corr port map(

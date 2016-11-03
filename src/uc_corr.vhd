@@ -23,9 +23,12 @@ begin
 
     process(etat_cr, start_corr, CPT)
     begin
-        etat_sv <= etat_cr; RAZ <= '0';
-        LD_BUF <= '0'; LD_CORR <= '0';
-        DEC_BUF <= '0'; end_corr <= '0';
+        etat_sv <= etat_cr;
+        RAZ <= '0';
+        LD_BUF <= '0';
+        LD_CORR <= '0';
+        DEC_BUF <= '0';
+        end_corr <= '0';
 
         case etat_cr is
             when Repos =>

@@ -46,10 +46,10 @@ begin
 
     bufOut <= D_mem(0);
 
-    comp1Out <= '1' when (unsigned(P1) - unsigned(cpt_intern)) = 0 else '0';
-    comp2Out <= '1' when (unsigned(P2) - unsigned(cpt_intern)) = 0 else '0';
+    comp1Out <= '1' when (unsigned(P2) - unsigned(cpt_intern)) = 0  else '0';
+    comp2Out <= '1' when (unsigned(P1) - unsigned(cpt_intern)) = 0  else '0';
 
-    mux1Out <= comp1Out when Err(1) = '1' else '0';
+    mux1Out <= comp1Out when Err(1) = '1' and Err(0) = '0' else '0';
     mux2Out <= comp2Out when (Err(1) = '1') or (Err(0) = '1') else '0';
 
     muxCorrSel <= '1' when (mux1Out='1') or (mux2Out='1') else '0';

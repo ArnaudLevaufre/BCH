@@ -16,7 +16,7 @@ entity avalon is
 
         ask_irq: in std_logic;
         words: out unsigned(1 downto 0);
-        decode: out std_logic;
+        decode, irq: out std_logic;
 
         corr_out: in std_logic_vector(31 downto 0);
         corr_out_ld: in std_logic
@@ -45,22 +45,12 @@ begin
 
     process(clk)
     begin
-        d_out <= (others => '0');
         if rising_edge(clk) then
             if raz = '1' then
                 in_words <= "00";
                 in_decode <= '0';
                 in_irqen <= '0';
-                in_irq <= '0';
-            elsif r = '1' then
-                if addr = "0" then
-                    D_out <= (0 => in_irq, 1 => in_empty, 2 => in_full, others => '0');
-                    -- TODO: in_irq <= '0';
-                elsif unsigned(addr) = 1 then
-                    D_out <= (0 => in_decode, 1 => in_irqEn, others => '0');
-                elsif unsigned(addr) = 2 then
-                    D_out <= in_FifoOut;
-                end if;
+                in_irq <= '1';
             elsif w = '1' then
                 if unsigned(addr) = 1 then
                     in_decode <= D_in(0);
@@ -71,20 +61,25 @@ begin
             end if;
 
             if ask_irq = '1' then
+                in_decode <= '0';
                 in_words <= "00";
                 if in_irqEn = '1' then
-                    in_irq <= '1';
+                    in_irq <= '0';
                 end if;
             end if;
         end if;
     end process;
 
     WrFifo <= '1' when ((unsigned(addr) = 2) and (w = '1')) or corr_out_ld = '1' else '0';
-    RdFifo <= '1' when corr_out_ld = '1' else '0';
+    RdFifo <= '1' when ((unsigned(addr) = 2) and (r = '1')) or corr_out_ld = '1' else '0';
     words <= in_words;
     decode <= in_decode;
     FifoIn <= corr_out when corr_out_ld = '1' else D_in;
     FifoOut <= in_FifoOut;
+    irq <= in_irq;
+    D_out <= (0 => in_irq, 1 => in_empty, 2 => in_full, others => '0') when r = '1' and unsigned(addr) = 0 else
+             (0 => in_decode, 1 => in_irqEn, others => '0') when r = '1' and unsigned(addr) = 1 else
+              in_FifoOut when unsigned(addr) = 2;
 end arch_avalon;
 
 library IEEE;
