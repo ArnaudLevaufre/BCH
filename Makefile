@@ -1,4 +1,4 @@
-ENTITIES=ut_syndrome uc_syndrome syndrome ut_lut uc_lut lut uc_master fifo avalon bch
+ENTITIES=ut_syndrome uc_syndrome syndrome ut_lut uc_lut lut uc_master fifo avalon corr bch
 VCDDIR=vcd
 WORKDIR=work
 .NOTPARALLEL:

@@ -24,13 +24,17 @@ architecture arch_bch of bch is
     signal clear, ld_syn_buf, calc: std_logic;
     signal P1, P2: std_logic_vector(4 downto 0);
     signal ERR: std_logic_vector(1 downto 0);
+    signal Corrected: std_logic_vector(31 downto 0);
+    signal wrfifo, rfifo, in_r, in_w: std_logic;
 begin
+    wrfifo <= w or in_w;
+    rfifo <= r or in_r;
     comp_avalon: entity avalon port map(
         clk => clk,
         raz => raz,
 
-        r => r,
-        w => w,
+        r => in_r,
+        w => wrfifo,
         D_in => D_in,
         D_out => D_out,
         addr => addr,
@@ -59,7 +63,10 @@ begin
         end_corr => end_corr,
 
         ask_irq => ask_irq,
-        raz_err => raz_err
+        raz_err => raz_err,
+        r_fifo => in_r,
+        w_fifo => in_w
+
     );
 
     comp_syndrome: entity syndrome port map(
@@ -87,16 +94,85 @@ begin
         ERR => ERR
     );
 
+    comp_corr: entity corr port map(
+        clk => clk,
+        raz => raz,
+
+        start_corr => start_corr,
+        end_corr => end_corr,
+
+        P1 => P1,
+        P2 => P2,
+        message => FifoOut,
+        D_out => Corrected
+    );
+
 end arch_bch;
 
 
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
+use work.bch;
 
 entity bch_test is
 end bch_test;
 
 architecture arch_bch_test of bch_test is
+    signal finish: std_logic;
+    signal clk: std_logic;
+    signal raz: std_logic;
+    signal r, w: std_logic;
+    signal D_in: std_logic_vector(31 downto 0) := (others => '0');
+    signal D_out: std_logic_vector(31 downto 0);
+    signal addr: std_logic_vector(63 downto 0) := (others => '0'); -- TODO: Find out the right size
 begin
+    in_bch: entity bch port map(
+        clk => clk,
+        raz => raz,
+        r => r,
+        w => w,
+        D_in => D_in,
+        D_out => D_out,
+        addr => addr
+    );
+
+    process begin
+        r <= '0';
+        w <= '0';
+        raz <= '1';
+        wait for 41 ns;
+        raz <= '0';
+
+        addr <= (1 => '1', others => '0');
+        w <= '1';
+        D_in <= "01100011100011100000111001010110"; -- 3 errors
+        wait for 40 ns;
+        D_in <= "01100011100011100000111001010111"; -- 2 errors
+        wait for 40 ns;
+        D_in <= "01100011100011100010111001010111"; -- 1 error
+        wait for 40 ns;
+        D_in <= "01100011100011100010110001010111"; -- 0 error
+        wait for 40 ns;
+        addr <= (0 => '1', others => '0');
+        D_in <= (0 => '1', 1 => '1', others => '0');
+        wait for 40 ns;
+        w <= '0';
+        wait for 38 us;
+        wait for 38 us;
+        finish <= '1';
+        wait;
+    end process;
+
+    process
+    begin
+        if finish = '1' then
+            wait;
+        else
+            clk <= '1';
+            wait for 20 ns;
+            clk <= '0';
+            wait for 20 ns;
+        end if;
+    end process;
 end arch_bch_test;
