@@ -182,7 +182,6 @@ begin
         wait until rising_edge(clk);
 
         finish <= '1';
-        report "Lut UC testbench finished";
         wait;
     end process;
 

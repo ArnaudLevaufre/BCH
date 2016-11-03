@@ -6,6 +6,11 @@ WORKDIR=work
 
 all: $(patsubst %,%_test.vcd,${ENTITIES}) clean_o
 
+test: $(patsubst %,%_test_no_assert.vcd,${ENTITIES}) clean_o
+
+%_test_no_assert.vcd: %_test
+	./$< --vcd=$(VCDDIR)/$@ --assert-level=note
+
 %_test.vcd: %_test
 	./$< --vcd=$(VCDDIR)/$@
 

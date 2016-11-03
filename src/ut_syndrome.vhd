@@ -145,7 +145,6 @@ architecture behavior of ut_syndrome_test is
 
             wait for 500 ns;
             finish <= '1';
-			report "ut_syndrome testbench finished";
 			wait;
 		end process;
 

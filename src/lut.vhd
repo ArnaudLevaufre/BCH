@@ -165,7 +165,6 @@ begin
         wait for 1 ns;
         assert err = "00";
         finish <= '1';
-        report "Tests for the full LUT complete";
         wait;
     end process;
 

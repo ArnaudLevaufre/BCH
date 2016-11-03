@@ -158,7 +158,6 @@ begin
         assert ERR2 = '1';
         wait for 40 ns;
         finish <= '1';
-        report "LUT testbench finished";
         wait;
     end process;
 

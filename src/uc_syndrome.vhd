@@ -158,7 +158,6 @@ architecture behavior of uc_syndrome_test is
             wait for 200 ns;
 
             finish <= '1';
-			report "uc_syndrome testbench finished";
 			wait;
 		end process;
 

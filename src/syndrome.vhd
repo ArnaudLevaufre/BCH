@@ -133,7 +133,6 @@ architecture behavior of syndrome_test is
             wait for 500 ns;
 
             finish <= '1';
-			report "Syndrome testbench finished";
 			wait;
 		end process;
 

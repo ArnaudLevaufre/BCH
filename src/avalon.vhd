@@ -97,7 +97,7 @@ end avalon_test;
 
 architecture arch_avalon_test of avalon_test is
     signal clk: std_logic;
-    signal addr: std_logic_vector(63 downto 0);
+    signal addr: std_logic_vector(63 downto 0) := (others => '0');
     signal r, w: std_logic;
     signal D_in, D_out: std_logic_vector(31 downto 0);
     signal ask_irq, decode: std_logic;
