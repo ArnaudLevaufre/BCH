@@ -22,7 +22,7 @@ test: $(patsubst %,%_test_no_assert.vcd,${ENTITIES}) clean_o
 	ghdl -a --workdir=$(WORKDIR) $<
 
 clean_o:
-		rm *.o
+		rm -f *.o
 
 clean: clean_o
 	rm -f $(VCDDIR)/*.vcd $(WORKDIR)/*
