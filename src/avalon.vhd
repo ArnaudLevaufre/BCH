@@ -8,7 +8,7 @@ entity avalon is
         clk: in std_logic;
         raz: in std_logic;
 
-        addr: in std_logic_vector(63 downto 0); -- TODO: Find the real size
+        addr: in std_logic_vector(1 downto 0); -- TODO: Find the real size
         r, w: in std_logic;
         D_in: in std_logic_vector(31 downto 0);
         D_out: out std_logic_vector(31 downto 0);
@@ -94,7 +94,7 @@ end avalon_test;
 
 architecture arch_avalon_test of avalon_test is
     signal clk: std_logic;
-    signal addr: std_logic_vector(63 downto 0) := (others => '0');
+    signal addr: std_logic_vector(1 downto 0) := (others => '0');
     signal r, w: std_logic;
     signal D_in, D_out: std_logic_vector(31 downto 0);
     signal ask_irq, decode: std_logic;
