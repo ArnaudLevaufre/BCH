@@ -5,12 +5,13 @@ use IEEE.numeric_std.all;
 entity uc_master is
     port(
         clk: in std_logic;
-        decode, raz: in std_logic;
+        decode, reset: in std_logic;
         syndrome: in std_logic_vector(9 downto 0);
         nb_words: in unsigned(1 downto 0);
         start_syndrome, start_lut, start_corr: out std_logic;
         end_syndrome, end_lut, end_corr: in std_logic;
-        ask_irq, raz_err, corr_out_ld: out std_logic
+        ask_irq, raz_err, corr_out_ld: out std_logic;
+        initFifo: out std_logic
     );
 end uc_master;
 
@@ -19,14 +20,14 @@ architecture arch_uc_master of uc_master is
     signal current_state, next_state: state;
     signal nb_processed: std_logic_vector(1 downto 0);
 begin
-    process(clk)
+    process(clk, reset)
     begin
-        if rising_edge(clk) then
-            if raz = '1' then
-                current_state <= REPOS;
-            else
-                current_state <= next_state;
-            end if;
+        if reset = '1' then
+            current_state <= REPOS;
+            initFifo <= '1';
+        elsif rising_edge(clk) then
+            initFifo <= '0';
+            current_state <= next_state;
         end if;
     end process;
 
@@ -103,7 +104,7 @@ end uc_master_test;
 architecture arch_uc_master_test of uc_master_test is
     signal clk: std_logic;
     signal finish: std_logic;
-    signal decode, raz: std_logic;
+    signal decode, reset: std_logic;
     signal start_syndrome, end_syndrome: std_logic;
     signal start_lut, end_lut: std_logic;
     signal start_corr, end_corr: std_logic;
@@ -113,7 +114,7 @@ architecture arch_uc_master_test of uc_master_test is
 begin
     in_uc_master: entity uc_master port map(
         clk => clk,
-        raz => raz,
+        reset => reset,
         decode => decode,
         syndrome => syndrome,
         start_syndrome => start_syndrome,
@@ -128,7 +129,7 @@ begin
     );
     process
     begin
-        raz <= '1';
+        reset <= '1';
         decode <= '0';
         nb_words <= "10";
         end_syndrome <= '0';
@@ -136,7 +137,7 @@ begin
         end_lut <= '0';
         end_corr <= '0';
         wait for 41 ns;
-        raz <= '0';
+        reset <= '0';
 
         decode <= '1';
         wait for 40 ns;

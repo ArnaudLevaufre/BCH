@@ -6,7 +6,7 @@ use work.all;
 entity bch is
     port(
         clk: in std_logic;
-        raz: in std_logic;
+        reset: in std_logic;
         r, w: in std_logic;
         D_in: in std_logic_vector(31 downto 0);
         D_out: out std_logic_vector(31 downto 0);
@@ -26,10 +26,11 @@ architecture arch_bch of bch is
     signal P1: std_logic_vector(4 downto 0) := (others => '0');
     signal P2: std_logic_vector(4 downto 0) := (others => '0');
     signal ERR: std_logic_vector(1 downto 0);
+    signal initFifo: std_logic;
 begin
     comp_avalon: entity avalon port map(
         clk => clk,
-        raz => raz,
+        reset => reset,
 
         r => r,
         w => w,
@@ -43,12 +44,13 @@ begin
         decode => decode,
         words => words,
         FifoOut => FifoOut,
+        initFifo => initFifo,
         irq => irq
     );
 
     comp_uc_master: entity uc_master port map(
         clk => clk,
-        raz => raz,
+        reset => reset,
 
         decode => decode,
         nb_words => words,
@@ -63,12 +65,13 @@ begin
 
         ask_irq => ask_irq,
         raz_err => raz_err,
-        corr_out_ld => corr_out_ld
+        corr_out_ld => corr_out_ld,
+        initFifo => initFifo
     );
 
     comp_syndrome: entity syndrome port map(
         clk => clk,
-        reset => raz,
+        reset => reset,
 
         start_syn => start_syndrome,
         end_syn => end_syndrome,
@@ -79,7 +82,7 @@ begin
 
     comp_lut: entity lut port map(
         clk => clk,
-        reset => raz,
+        reset => reset,
 
         start_lut => start_lut,
         end_lut => end_lut,
@@ -93,7 +96,7 @@ begin
 
     comp_corr: entity corr port map(
         clk => clk,
-        reset => raz,
+        reset => reset,
 
         start_corr => start_corr,
         end_corr => end_corr,
@@ -119,7 +122,7 @@ end bch_test;
 architecture arch_bch_test of bch_test is
     signal finish, irq: std_logic;
     signal clk: std_logic;
-    signal raz: std_logic;
+    signal reset: std_logic;
     signal r, w: std_logic;
     signal D_in: std_logic_vector(31 downto 0) := (others => '0');
     signal D_out: std_logic_vector(31 downto 0);
@@ -127,7 +130,7 @@ architecture arch_bch_test of bch_test is
 begin
     in_bch: entity bch port map(
         clk => clk,
-        raz => raz,
+        reset => reset,
         r => r,
         w => w,
         D_in => D_in,
@@ -139,9 +142,14 @@ begin
     process begin
         r <= '0';
         w <= '0';
-        raz <= '1';
+        reset <= '1';
         wait for 41 ns;
-        raz <= '0';
+        reset <= '0';
+
+        r <= '1';
+        addr <= (1 => '0', others => '0');
+        wait for 40 ns;
+        r <= '0';
 
         addr <= (1 => '1', others => '0');
         w <= '1';
@@ -158,6 +166,7 @@ begin
         wait for 40 ns;
         w <= '0';
         wait until irq = '0';
+        wait for 400 ns;
         r <= '1';
         addr <= (1 => '1', others => '0');
         wait for 1 ns;

@@ -6,7 +6,7 @@ use work.FIFO;
 entity avalon is
     port(
         clk: in std_logic;
-        raz: in std_logic;
+        reset: in std_logic;
 
         addr: in std_logic_vector(1 downto 0); -- TODO: Find the real size
         r, w: in std_logic;
@@ -19,7 +19,9 @@ entity avalon is
         decode, irq: out std_logic;
 
         corr_out: in std_logic_vector(31 downto 0);
-        corr_out_ld: in std_logic
+        corr_out_ld: in std_logic;
+
+        initFifo: in std_logic
     );
 end avalon;
 
@@ -32,7 +34,7 @@ architecture arch_avalon of avalon is
 begin
     in_fifo: entity FIFO generic map(DATA_WIDTH => 32, FIFO_SIZE => 2) port map (
         clk => clk,
-        initFifo => raz,
+        initFifo => initFifo,
         WrFifo => WrFifo,
         RdFifo => RdFifo,
 	    DataIn => FifoIn,
@@ -41,15 +43,15 @@ begin
         FifoFull => in_full
     );
 
-    process(clk)
+    process(reset, clk)
     begin
-        if rising_edge(clk) then
-            if raz = '1' then
-                in_words <= "00";
-                in_decode <= '0';
-                in_irqen <= '0';
-                in_irq <= '1';
-            elsif r = '1' then
+        if reset = '1' then
+            in_words <= "00";
+            in_decode <= '0';
+            in_irqen <= '0';
+            in_irq <= '1';
+        elsif rising_edge(clk) then
+            if r = '1' then
                 if unsigned(addr) = 0 then
                     in_irq <= '1';
                 end if;
@@ -81,7 +83,7 @@ begin
     irq <= in_irq;
     D_out <= (0 => in_irq, 1 => in_empty, 2 => in_full, others => '0') when r = '1' and unsigned(addr) = 0 else
              (0 => in_decode, 1 => in_irqEn, others => '0') when r = '1' and unsigned(addr) = 1 else
-              in_FifoOut when unsigned(addr) = 2 else (others => '0');
+              in_FifoOut when unsigned(addr) = 2 and r = '1' else (others => '0');
 end arch_avalon;
 
 library IEEE;
@@ -100,15 +102,15 @@ architecture arch_avalon_test of avalon_test is
     signal ask_irq, decode: std_logic;
     signal words: unsigned(1 downto 0);
     signal finish: std_logic;
-    signal raz: std_logic;
+    signal reset: std_logic;
     signal FifoOut: std_logic_vector(31 downto 0);
     signal corr_out: std_logic_vector(31 downto 0);
-    signal corr_out_ld: std_logic;
+    signal initfifo, corr_out_ld: std_logic;
 begin
     in_avalon: entity avalon port map(
         clk => clk,
         addr => addr,
-        raz => raz,
+        reset => reset,
         r => r,
         w => w,
         D_in => D_in,
@@ -118,23 +120,26 @@ begin
         decode => decode,
         FifoOut => FifoOut,
         corr_out => corr_out,
-        corr_out_ld => corr_out_ld
+        corr_out_ld => corr_out_ld,
+        initfifo => initfifo
     );
     process
     begin
         -- RAZ
         addr <= (others => '0');
         w <= '0';
-        raz <= '1';
+        reset <= '1';
         ask_irq <= '0';
         r <= '0';
         corr_out_ld <= '0';
         corr_out <= (others => '0');
         D_in <= (others => '0');
         finish <= '0';
+        initfifo <= '1';
 
         wait for 41 ns;
-        raz <= '0';
+        reset <= '0';
+        initfifo <= '0';
 
         -- Load 2 messages
         addr <= (1 => '1', others => '0');
