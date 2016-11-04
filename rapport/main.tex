@@ -66,7 +66,6 @@
                     \node[shape=dff] at (12, 6) (dff8) {8};
                     \node[shape=dff] at (12, 3) (dff9) {9};
 
-                    \node[circle,draw,fill=black,scale=0.3] at (7,24)  {};
                     \node[circle,draw,fill=black,scale=0.3] at (9,24)  {};
                     \node[circle,draw,fill=black,scale=0.3] at (9, 18)  {};
                     \node[circle,draw,fill=black,scale=0.3] at (9, 15)  {};
@@ -123,12 +122,12 @@
                     \draw [->, double] (data) -- (2.5, 26) |- (synbuff.Din);
                     \draw [->] (ld) -- (2, 25) |- (synbuff.Ld);
 
-                    \draw [->] (synbuff.Dout) -|  (7, 26) -| (x10.input 1);
-                    \draw [->] (synbuff.Dout) -- (9, 24) -| (x3.input 2);
-                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 18) -| (x5.input 2);
-                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 15) -| (x6.input 2);
-                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 9) -| (x8.input 2);
-                    \draw [->] (synbuff.Dout) -- (9, 24) -- (9, 6) -| (x9.input 2);
+                    \draw [->] (synbuff.Dout) -| (x10.input 1);
+                    \draw [->] (x10.output) -- (8, 29) -- (9, 29) -- (9, 24) -| (x3.input 2);
+                    \draw [->] (x10.output) -- (8, 29) -- (9, 29) -- (9, 24) -- (9, 18) -| (x5.input 2);
+                    \draw [->] (x10.output) -- (8, 29) -- (9, 29) -- (9, 24) -- (9, 15) -| (x6.input 2);
+                    \draw [->] (x10.output) -- (8, 29) -- (9, 29) -- (9, 24) -- (9, 9) -| (x8.input 2);
+                    \draw [->] (x10.output) -- (8, 29) -- (9, 29) -- (9, 24) -- (9, 6) -| (x9.input 2);
 
                     \draw [->] (x10.output) |- (dff0.D);
                     \draw [->] (x9.output) |- (dff9.D);
