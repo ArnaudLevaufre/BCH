@@ -1,59 +1,62 @@
-void BCH_push_msg(unsigned int msg) {
-	IOWR_BCH_DATA(BCH_0_BASE, msg);
+#include "BCHAPI.h"
+
+
+void BCH_push_msg(unsigned long base, unsigned int msg) {
+	IOWR_BCH_DATA(base, msg);
 }
 
-void BCH_pop_msg(bch_msg* msg){
-	volatile unsigned data = IORD_BCH_DATA(BCH_0_BASE);
+void BCH_pop_msg(unsigned long base, bch_msg* msg){
+	volatile unsigned data = IORD_BCH_DATA(base);
 	msg->error = data >> 24;
 	msg->msg = data & 0x8FFFFF;
 }
 
 
-unsigned int BCH_read_status() {
-	return IORD_BCH_STATUS(BCH_0_BASE);
+unsigned int BCH_read_status(unsigned long base) {
+	return IORD_BCH_STATUS(base);
 }
 
-bool BCH_is_full(){
-	return BCH_read_status() & BCH_MASK_STATUS_FULL;
+bool BCH_is_full(unsigned long base){
+	return BCH_read_status(base) & BCH_MASK_STATUS_FULL;
 }
 
-bool BCH_is_empty(){
-	return BCH_read_status() & BCH_MASK_STATUS_EMPTY;
+bool BCH_is_empty(unsigned long base){
+	return BCH_read_status(base) & BCH_MASK_STATUS_EMPTY;
 }
 
-bool BCH_is_irq() {
-	return BCH_read_status() & BCH_MASK_STATUS_IRQ;
+bool BCH_is_irq(unsigned long base) {
+	return BCH_read_status(base) & BCH_MASK_STATUS_IRQ;
 }
 
-void BCH_ack_irq() {
-	BCH_is_irq();
-}
-
-
-unsigned int BCH_read_ctrl(){
-	return IORD_BCH_CTRL(BCH_0_BASE);
-}
-bool BCH_is_irq_enabled(){
-	return BCH_read_ctrl() & BCH_MASK_CTRL_IRQ_ENABLED;
-}
-bool BCH_is_decoding(){
-	return BCH_read_ctrl() & BCH_MASK_CTRL_DECODE;
+void BCH_ack_irq(unsigned long base) {
+	BCH_is_irq(base);
 }
 
 
-void BCH_write_ctrl(unsigned int data){
-	IOWR_BCH_CTRL(BCH_0_BASE, data);
+unsigned int BCH_read_ctrl(unsigned long base){
+	return IORD_BCH_CTRL(base);
 }
-void BCH_enable_irq(){
-	volatile unsigned int current = BCH_read_ctrl();
-	BCH_write_ctrl(current | BCH_MASK_CTRL_IRQ_ENABLED);
+bool BCH_is_irq_enabled(unsigned long base){
+	return BCH_read_ctrl(base) & BCH_MASK_CTRL_IRQ_ENABLED;
 }
-void BCH_disable_irq(){
-	volatile unsigned int current = BCH_read_ctrl();
-	BCH_write_ctrl(current & ~BCH_MASK_CTRL_IRQ_ENABLED);
+bool BCH_is_decoding(unsigned long base){
+	return BCH_read_ctrl(base) & BCH_MASK_CTRL_DECODE;
 }
-void BCH_start(){
-	volatile unsigned int current = BCH_read_ctrl();
-	BCH_write_ctrl(current | BCH_MASK_CTRL_DECODE);
+
+
+void BCH_write_ctrl(unsigned long base, unsigned int data){
+	IOWR_BCH_CTRL(base, data);
+}
+void BCH_enable_irq(unsigned long base){
+	volatile unsigned int current = BCH_read_ctrl(base);
+	BCH_write_ctrl(base, current | BCH_MASK_CTRL_IRQ_ENABLED);
+}
+void BCH_disable_irq(unsigned long base){
+	volatile unsigned int current = BCH_read_ctrl(base);
+	BCH_write_ctrl(base, current & ~BCH_MASK_CTRL_IRQ_ENABLED);
+}
+void BCH_start(unsigned long base){
+	volatile unsigned int current = BCH_read_ctrl(base);
+	BCH_write_ctrl(base, current | BCH_MASK_CTRL_DECODE);
 }
 
