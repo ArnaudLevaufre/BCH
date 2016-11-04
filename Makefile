@@ -2,7 +2,7 @@ ENTITIES=ut_syndrome uc_syndrome syndrome ut_lut uc_lut lut uc_corr ut_corr corr
 VCDDIR=vcd
 WORKDIR=work
 .NOTPARALLEL:
-.PHONY: quartus
+.PHONY: quartus rapport
 
 
 all: $(patsubst %,%_test.vcd,${ENTITIES}) clean_o
@@ -30,3 +30,6 @@ clean: clean_o
 
 quartus:
 		$(MAKE) -C quartus
+
+rapport:
+		$(MAKE) -C rapport
