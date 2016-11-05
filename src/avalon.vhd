@@ -8,7 +8,7 @@ entity avalon is
         clk: in std_logic;
         reset: in std_logic;
 
-        addr: in std_logic_vector(1 downto 0); -- TODO: Find the real size
+        addr: in std_logic_vector(1 downto 0);
         r, w: in std_logic;
         D_in: in std_logic_vector(31 downto 0);
         D_out: out std_logic_vector(31 downto 0);

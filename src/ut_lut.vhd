@@ -76,8 +76,8 @@ begin
     S1xS2 <= S1 xor S2;
     ERR1 <= '1' when S1 = R_SYNDROME else '0';
     ERR2 <= '1' when S1xS2 = R_SYNDROME else '0';
-    P1_MAX <= '1' when unsigned(R_P1) = 30 else '0'; -- TODO: Change this
-    P2_MAX <= '1' when (unsigned(R_P2) + 1) = 30 else '0'; -- TODO: Change this
+    P1_MAX <= '1' when unsigned(R_P1) = 30 else '0';
+    P2_MAX <= '1' when (unsigned(R_P2) + 1) = 30 else '0';
     P1 <= R_P1;
     P2 <= std_logic_vector(unsigned(R_P2) + 1);
 end arch_ut_lut;

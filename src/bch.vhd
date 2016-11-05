@@ -10,7 +10,7 @@ entity bch is
         r, w: in std_logic;
         D_in: in std_logic_vector(31 downto 0);
         D_out: out std_logic_vector(31 downto 0);
-        addr: in std_logic_vector(1 downto 0); -- TODO: Find out the right size
+        addr: in std_logic_vector(1 downto 0);
         irq: out std_logic
     );
 end bch;
@@ -126,7 +126,7 @@ architecture arch_bch_test of bch_test is
     signal r, w: std_logic;
     signal D_in: std_logic_vector(31 downto 0) := (others => '0');
     signal D_out: std_logic_vector(31 downto 0);
-    signal addr: std_logic_vector(1 downto 0) := (others => '0'); -- TODO: Find out the right size
+    signal addr: std_logic_vector(1 downto 0) := (others => '0');
 begin
     in_bch: entity bch port map(
         clk => clk,
