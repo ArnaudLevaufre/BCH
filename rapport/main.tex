@@ -49,9 +49,64 @@
 
 
         \section{Calcul du syndrome}
-            \subsection{Unité de traitement}
+            Le calcul du syndrome est décomposé en une unité de traitement et
+            un unité de contrôle qui sont présentées dans les
+            sections~\ref{sec:ut_syndrome} et \ref{sec:uc_syndrome}. La
+            figure~\ref{fig:syndrome} présenté ci-dessous montre les signaux
+            entrants et sortants nécessaire au calcul du syndrome par les
+            unités proposées. Le principe de fonctionnement est simple,
+            l'utilisateur de ce bloc propose une donnée codée sur 32 bits sur
+            l'entrée «~Data~» et démarre le calcul en imposant l'entrée
+            «~Start~» à 1.  Une fois calculé le syndrome est disponible sur la
+            sortie «~Syndrome~» et le drapeau «~End~» est passé à 1 sur une durée
+            d'une période d'horloge.
 
             \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth,scale=1, every node/.style={scale=1}, circuit logic US]
+                    \node[shape=syndrome] (syndrome) {Syndrome};
+
+                    \draw[<-, double] (syndrome.Data) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (syndrome.Start) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (syndrome.Reset) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (syndrome.CLK) -- +(-1, 0) node [anchor=east] {};
+
+                    \draw[->, double] (syndrome.Syndrome) -- +(1, 0) node [anchor=west] {};
+                    \draw[->] (syndrome.End) -- +(1, 0) node [anchor=west] {};
+                \end{tikzpicture}
+                \caption{Vue extérieur du bloc de calcul du syndrome}
+                \label{fig:syndrome}
+            \end{figure}
+
+            \subsection{Unité de traitement}
+            \label{sec:ut_syndrome}
+
+            L'unité de traitement est présentée en
+            figure~\ref{fig:ut_syndrome_ext} et \ref{fig:ut_syndrome} et
+            reprend le schéma du sujet en lui ajoutant le registre à décalage
+            permettant de rentrer la donnée utilisateur bit par bit, poids
+            faible en premier.
+
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth,scale=1, every node/.style={scale=1}, circuit logic US]
+                    \node[shape=utsyndrome] (utsyndrome) {UT Syndrome};
+
+                    \draw[<-, double] (utsyndrome.Data) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (utsyndrome.ld) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (utsyndrome.calc) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (utsyndrome.clear) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (utsyndrome.CLK) -- +(-1, 0) node [anchor=east] {};
+
+                    \draw[->, double] (utsyndrome.Syndrome) -- +(1, 0) node [anchor=west] {};
+
+                \end{tikzpicture}
+                \caption{vue éxtérieur de l'unité de traitement}
+                \label{fig:ut_syndrome_ext}
+            \end{figure}
+
+            \begin{figure}[H]
+                \centering
                 \begin{tikzpicture}[>=stealth,scale=0.375, every node/.style={scale=0.5}, circuit logic US]
                     %\draw[help lines] (0, 0) grid (29, 32);
 
@@ -183,9 +238,41 @@
 
                 \end{tikzpicture}
                 \caption{Unité de traitement pour le calcul du syndrome}
+                \label{fig:ut_syndrome}
             \end{figure}
 
             \subsection{Unité de contrôle}
+            \label{sec:uc_syndrome}
+
+            L'unité de controle utilisé pour le calcul du syndrome est définie
+            par la machine à étât présenté en figure~\ref{fig:uc_syndrome_ext}
+            et \ref{fig:me_syndrome}.  Elle se base sur un compteur afin
+            d'autoriser le décalage et calcul du syndrome pendant les 31 coups
+            d'horloge nécéssaire. Après les 31 coups d'horloge le résultat est
+            conservé dans les registres permettants le calcul du syndrome. Il
+            sera conservé jusqua la prochaine demande de calcul de syndrome,
+            qui débutera par le chargement du registre à décalage avec les
+            données issues de la pile et par la remise à zéro des registres de
+            calculs du syndrome.
+
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth,scale=1, every node/.style={scale=1}, circuit logic US]
+                    \node[shape=ucsyndrome] (ucsyndrome) {UC Syndrome};
+
+                    \draw[<-] (ucsyndrome.Start) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (ucsyndrome.Reset) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (ucsyndrome.CLK) -- +(-1, 0) node [anchor=east] {};
+
+                    \draw[->] (ucsyndrome.End) -- +(1, 0) node [anchor=west] {};
+                    \draw[->] (ucsyndrome.Calc) -- +(1, 0) node [anchor=west] {};
+                    \draw[->] (ucsyndrome.Ld) -- +(1, 0) node [anchor=west] {};
+                    \draw[->] (ucsyndrome.Clear) -- +(1, 0) node [anchor=west] {};
+
+                \end{tikzpicture}
+                \caption{Vue éxtérieur de l'unité de controle du calcul du syndrome}
+                \label{fig:uc_syndrome_ext}
+            \end{figure}
 
             \begin{figure}[H]
                 \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm]
@@ -200,7 +287,39 @@
 
                 \end{tikzpicture}
                 \caption{Machine à état utilisée pour le calcul du syndrome}
+                \label{fig:me_syndrome}
             \end{figure}
+
+            \subsection{Définition des connexions entre l'UC et l'UT}
+
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth, node distance=3cm, scale=1, every node/.style={scale=1}, circuit logic US]
+                    \node[shape=ucsyndrome] at (5, 5) (ucsyndrome) {UC Syndrome};
+                    \node[shape=utsyndrome] (utsyndrome) [below of=ucsyndrome] {UT Syndrome};
+
+                    \draw[<-] (ucsyndrome.Start) -- +(-3, 0) node [anchor=east] {start\_syndrome};
+                    \draw[<-] (ucsyndrome.Reset) -- +(-3, 0) node [anchor=east] {reset};
+                    \draw[<-] (ucsyndrome.CLK) -- +(-3, 0) node [anchor=east] (CLK) {CLK};
+
+                    \draw[->] (ucsyndrome.End) -- +(3, 0) node [anchor=west] {end\_syndrome};
+                    \draw[->] (ucsyndrome.Calc) -- +(1, 0) node [anchor=west] {} -- +(1, -1.25) -- +(-6, -1.25) |- (utsyndrome.calc);
+                    \draw[->] (ucsyndrome.Ld) -- +(1.25, 0) node [anchor=west] {} -- +(1.25, -2) -- +(-5.75, -2) |- (utsyndrome.ld);
+                    \draw[->] (ucsyndrome.Clear) -- +(0.75, 0) node [anchor=west] {} -- +(0.75, -0.5) -- +(-6.25, -0.5) |- (utsyndrome.clear);
+
+                    \draw[<-, double] (utsyndrome.Data) -- +(-3, 0) node [anchor=east] {Data\_in (FifoOut)};
+                    \draw[<-] (utsyndrome.calc) -- +(-1, 0) node [anchor=east] {};
+                    \draw[<-] (utsyndrome.CLK) -- +(-2, 0) node [anchor=east] {} |- (CLK);
+
+                    \draw[->, double] (utsyndrome.Syndrome) -- +(3, 0) node [anchor=west] {syndrome};
+
+                    \draw[dashed] (0,0) -- (10, 0) -- (10, 7) -- (0, 7) -- (0,0);
+                \end{tikzpicture}
+
+                \caption{Connexions entre l'UC et l'UT du calcul du syndrome}
+                \label{fig:me_syndrome}
+            \end{figure}
+
 
         \section{Look up table}
         \section{Correcteur}
