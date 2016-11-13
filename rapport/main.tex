@@ -343,7 +343,7 @@
                     \node[circle, draw] at (9, 11) (p1max) {=};
                     \node[circle, draw] at (9, 5) (p2max) {=};
 
-                    \draw[<-, double] (syn.D) -- +(-9.5, 0) node [anchor=east] {Syndrome [9:0]};
+                    \draw[<-, double] (syn.D) -- +(-9.5, 0) node [anchor=east] {Syndrome $[9:0]$};
                     \draw[<-] (syn.S) -- +(0, -0.25) -- +(-0.75, -0.25) |- (2, 13.5) node [anchor=east] {Ld\_syndrome};
 
                     \draw[<-] (p1counter.Inc) -- +(-2, 0) node [anchor=east] {Inc\_P1};
@@ -352,28 +352,28 @@
                     \draw[<-] (p2counter.Inc) -- +(-2, 0) node [anchor=east] {Inc\_P2};
                     \draw[<-] (p2counter.Ld) -- +(-2, 0) node [anchor=east] {Raz\_P2};
 
-                    \draw[->] (p1counter.Q) -- +(1, 0) -- +(1, -4) -- +(-3, -4) |- (p2counter.Data);
-                    \draw[->] (p1counter.Q) -- +(1, 0) -- +(1, -4) |- (lut.Pone);
-                    \draw[->] (p1counter.Q) -- +(1, 0) |- (p1max.west);
+                    \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) -- +(-3, -4) |- (p2counter.Data);
+                    \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) |- (lut.Pone);
+                    \draw[->, double] (p1counter.Q) -- +(1, 0) |- (p1max.west);
 
-                    \draw[->] (p2counter.Q) -- +(1, 0) |- (lut.Ptwo);
-                    \draw[->] (p2counter.Q) -- +(1, 0) |- (p2max.west);
+                    \draw[->, double] (p2counter.Q) -- +(1, 0) |- (lut.Ptwo);
+                    \draw[->, double] (p2counter.Q) -- +(1, 0) |- (p2max.west);
 
-                    \draw[->] (lut.Sone) -- +(1, 0) |- (xor.input 1);
-                    \draw[->] (lut.Sone) -- +(1, 0) |- (cmp1.west);
-                    \draw[->] (lut.Stwo) -- +(1, 0) |- (xor.input 2);
+                    \draw[->, double] (lut.Sone) -- +(1, 0) |- (xor.input 1);
+                    \draw[->, double] (lut.Sone) -- +(1, 0) |- (cmp1.west);
+                    \draw[->, double] (lut.Stwo) -- +(1, 0) |- (xor.input 2);
 
-                    \draw[->] (xor.output) -- +(0.25, 0) |- (cmp2.west);
+                    \draw[->, double] (xor.output) -- +(0.25, 0) |- (cmp2.west);
 
-                    \draw[->] (syn.Q) -| (cmp1.north);
-                    \draw[->] (syn.Q) -| (13.33, 7.5) -| (cmp2.north);
+                    \draw[->, double] (syn.Q) -| (cmp1.north);
+                    \draw[->, double] (syn.Q) -| (13.33, 7.5) -| (cmp2.north);
 
                     \draw[->] (cmp1.east) -- +(2, 0) node [anchor=west] {ERR1};
                     \draw[->] (cmp2.east) -- +(2, 0) node [anchor=west] {ERR2};
                     \draw[->] (p1max.east) -- +(7, 0) node [anchor=west] {P1\_max};
                     \draw[->] (p2max.east) -- +(7, 0) node [anchor=west] {P2\_max};
-                    \draw[->] (p1max.north) -- +(0, 1) node [anchor=south] {30};
-                    \draw[->] (p2max.south) -- +(0, -1) node [anchor=north] {30};
+                    \draw[<-, double] (p1max.north) -- +(0, 1) node [anchor=south] {30};
+                    \draw[<-, double] (p2max.south) -- +(0, -1) node [anchor=north] {30};
 
                 \end{tikzpicture}
                 \caption{Unité de traitement de la Look up table.}
