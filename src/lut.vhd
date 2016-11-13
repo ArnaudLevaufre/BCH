@@ -20,7 +20,7 @@ use IEEE.numeric_std.all;
 architecture arch_lut of lut is
     component ut_lut is
         port (
-            clk, INC_P1, INC_P2, LD_SYNDROME, RAZ, RAZ_P2: in std_logic;
+            clk, INC_P1, INC_P2, LD_SYNDROME, RAZ, LD_P2: in std_logic;
             SYNDROME: in std_logic_vector(9 downto 0);
             P1_MAX, P2_MAX, ERR1, ERR2: out std_logic;
             P1, P2: out std_logic_vector(4 downto 0)
@@ -29,14 +29,14 @@ architecture arch_lut of lut is
 
     component uc_lut is
     port(
-        end_lut, RAZ, RAZ_P2, LD_SYNDROME, INC_P1, INC_P2, LD_ERR: out std_logic;
+        end_lut, RAZ, LD_P2, LD_SYNDROME, INC_P1, INC_P2, LD_ERR: out std_logic;
         ERR: out std_logic_vector(1 downto 0);
         start_lut, P1_MAX, P2_MAX, ERR1, ERR2: in std_logic;
         reset, clk: in std_logic
     );
     end component;
 
-    signal RAZ, RAZ_P2, LD_SYNDROME, INC_P1, INC_P2, ERR1, ERR2: std_logic;
+    signal RAZ, LD_P2, LD_SYNDROME, INC_P1, INC_P2, ERR1, ERR2: std_logic;
     signal P1_MAX, P2_MAX: std_logic;
     signal in_ld_err: std_logic;
     signal in_err, reg_err: std_logic_vector(1 downto 0);
@@ -47,7 +47,7 @@ begin
         INC_P2 => INC_P2,
         LD_SYNDROME => LD_SYNDROME,
         RAZ => RAZ,
-        RAZ_P2 => RAZ_P2,
+        LD_P2 => P2_MAX,
         SYNDROME => SYNDROME,
         P1_MAX => P1_MAX,
         P2_MAX => P2_MAX,
@@ -62,7 +62,6 @@ begin
         reset => reset,
         clk => clk,
         RAZ => RAZ,
-        RAZ_P2 => RAZ_P2,
         INC_P1 => INC_P1,
         INC_P2 => INC_P2,
         LD_SYNDROME => LD_SYNDROME,
@@ -163,7 +162,18 @@ begin
         raz_err <= '1';
         wait until rising_edge(clk);
         wait for 1 ns;
+        raz_err <= '0';
         assert err = "00";
+        start_lut <= '1';
+        SYNDROME <= "1101111111";
+        wait until rising_edge(clk);
+        start_lut <= '0';
+        wait for 1 ns;
+        wait until end_lut = '1';
+        wait for 55 ns;
+        assert ERR = "11";
+        assert unsigned(P1) = 29;
+        assert unsigned(P2) = 30;
         finish <= '1';
         wait;
     end process;

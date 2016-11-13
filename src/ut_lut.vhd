@@ -4,7 +4,7 @@ use IEEE.numeric_std.all;
 
 entity ut_lut is
     port(
-        clk, INC_P1, INC_P2, LD_SYNDROME, RAZ, RAZ_P2: in std_logic;
+        clk, INC_P1, INC_P2, LD_SYNDROME, RAZ, LD_P2: in std_logic;
         SYNDROME: in std_logic_vector(9 downto 0);
         P1_MAX, P2_MAX, ERR1, ERR2: out std_logic;
         P1, P2: out std_logic_vector(4 downto 0)
@@ -65,8 +65,8 @@ begin
             if RAZ = '1' then
                 R_P1 <= (others => '0');
             end if;
-            if RAZ_P2 = '1' then
-                R_P2 <= (others => '0');
+            if LD_P2 = '1' then
+                R_P2 <= R_P1;
             end if;
         end if;
     end process;
@@ -76,7 +76,7 @@ begin
     S1xS2 <= S1 xor S2;
     ERR1 <= '1' when S1 = R_SYNDROME else '0';
     ERR2 <= '1' when S1xS2 = R_SYNDROME else '0';
-    P1_MAX <= '1' when unsigned(R_P1) = 30 else '0';
+    P1_MAX <= '1' when unsigned(R_P1) = 29 else '0';
     P2_MAX <= '1' when (unsigned(R_P2) + 1) = 30 else '0';
     P1 <= R_P1;
     P2 <= std_logic_vector(unsigned(R_P2) + 1);
@@ -92,7 +92,7 @@ end ut_lut_test;
 architecture behavior of ut_lut_test is
     component ut_lut is
         port (
-            clk, INC_P1, INC_P2, LD_SYNDROME, RAZ, RAZ_P2: in std_logic;
+            clk, INC_P1, INC_P2, LD_SYNDROME, RAZ, LD_P2: in std_logic;
             SYNDROME: in std_logic_vector(9 downto 0);
             P1_MAX, P2_MAX, ERR1, ERR2: out std_logic;
             P1, P2: out std_logic_vector(4 downto 0)
@@ -105,7 +105,7 @@ architecture behavior of ut_lut_test is
     signal INC_P2: std_logic;
     signal LD_SYNDROME: std_logic;
     signal RAZ: std_logic;
-    signal RAZ_P2: std_logic;
+    signal LD_P2: std_logic;
     signal SYNDROME: std_logic_vector(9 downto 0);
     signal finish: std_logic := '0';
     signal P1: std_logic_vector(4 downto 0);
@@ -117,7 +117,7 @@ begin
         INC_P2 => INC_P2,
         LD_SYNDROME => LD_SYNDROME,
         RAZ => RAZ,
-        RAZ_P2 => RAZ_P2,
+        LD_P2 => output(1),
         SYNDROME => SYNDROME,
         P1_MAX => output(0),
         P2_MAX => output(1),
@@ -130,10 +130,10 @@ begin
     stim_proc: process
     begin
         RAZ <= '1';
-        RAZ_P2 <= '1';
+        LD_P2 <= '1';
         wait for 105 ns;
         RAZ <= '0';
-        RAZ_P2 <= '0';
+        LD_P2 <= '0';
         SYNDROME <= "0000000001";
         LD_SYNDROME <= '1';
         assert ERR1 = '0';

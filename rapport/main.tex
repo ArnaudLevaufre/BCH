@@ -350,7 +350,7 @@
                     \draw[<-] (p1counter.Raz) -- +(-2, 0) node [anchor=east] {Raz};
 
                     \draw[<-] (p2counter.Inc) -- +(-2, 0) node [anchor=east] {Inc\_P2};
-                    \draw[<-] (p2counter.Raz) -- +(-2, 0) node [anchor=east] {Raz\_P2};
+                    \draw[<-] (p2counter.Ld) -- +(-2, 0) node [anchor=east] {Ld\_P2};
 
                     \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) -- +(-3, -4) |- (p2counter.Data);
                     \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) |- (lut.Pone);
@@ -372,7 +372,7 @@
                     \draw[->] (cmp2.east) -- +(2, 0) node [anchor=west] {ERR2};
                     \draw[->] (p1max.east) -- +(7, 0) node [anchor=west] {P1\_max};
                     \draw[->] (p2max.east) -- +(7, 0) node [anchor=west] {P2\_max};
-                    \draw[<-, double] (p1max.north) -- +(0, 1) node [anchor=south] {30};
+                    \draw[<-, double] (p1max.north) -- +(0, 1) node [anchor=south] {29};
                     \draw[<-, double] (p2max.south) -- +(0, -1) node [anchor=north] {30};
 
                     \node at (6, 12)[anchor=south west] {5};
@@ -394,9 +394,9 @@
                     \node[state](E2)[below of=E1]{Look up};
 
                     \path[->] (E1) edge [loop right] node {!start\_lut} (E1);
-                    \path[->] (E1) edge node {start\_lut / raz, raz\_p2, ld\_syndrome} (E2);
+                    \path[->] (E1) edge node {start\_lut / raz, ld\_p2, ld\_syndrome} (E2);
 
-                    \path[->] (E2) edge [loop right] node  {p2\_max / inc\_p1, raz\_p2} (E2);
+                    \path[->] (E2) edge [loop right] node  {p2\_max / inc\_p1, ld\_p2} (E2);
                     \path[->] (E2) edge [loop below] node {!p1\_max . !p2\_max / inc\_p2} (E2);
 
                     \draw[->] (node cs:name=E2,angle=205) parabola +(-1, 1.5) node[anchor=east] {err1 / end\_lut, ld\_err, err = "01"} parabola[bend at end] (node cs:name=E1,angle=250);
