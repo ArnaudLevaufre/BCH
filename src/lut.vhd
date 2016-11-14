@@ -47,7 +47,7 @@ begin
         INC_P2 => INC_P2,
         LD_SYNDROME => LD_SYNDROME,
         RAZ => RAZ,
-        LD_P2 => P2_MAX,
+        LD_P2 => LD_P2,
         SYNDROME => SYNDROME,
         P1_MAX => P1_MAX,
         P2_MAX => P2_MAX,
@@ -62,6 +62,7 @@ begin
         reset => reset,
         clk => clk,
         RAZ => RAZ,
+        LD_P2 => LD_P2,
         INC_P1 => INC_P1,
         INC_P2 => INC_P2,
         LD_SYNDROME => LD_SYNDROME,
@@ -148,8 +149,8 @@ begin
         wait until end_lut = '1';
         wait for 55 ns;
         assert ERR = "10";
-        assert unsigned(P1) = 14 ;
-        assert unsigned(P2) = 17;
+        assert unsigned(P1) = 15;
+        assert unsigned(P2) = 18;
         start_lut <= '1';
         SYNDROME <= "1000101100";
         wait until rising_edge(clk);
@@ -158,7 +159,7 @@ begin
         wait until end_lut = '1';
         wait for 55 ns;
         assert ERR = "01";
-        assert unsigned(P1) = 17;
+        assert unsigned(P2) = 18;
         raz_err <= '1';
         wait until rising_edge(clk);
         wait for 1 ns;
@@ -172,8 +173,17 @@ begin
         wait until end_lut = '1';
         wait for 55 ns;
         assert ERR = "11";
-        assert unsigned(P1) = 29;
-        assert unsigned(P2) = 30;
+        assert unsigned(P1) = 30;
+        assert unsigned(P2) = 31;
+        start_lut <= '1';
+        SYNDROME <= "1001011011";
+        wait until rising_edge(clk);
+        start_lut <= '0';
+        wait for 1 ns;
+        wait until end_lut = '1';
+        wait for 55 ns;
+        assert ERR = "01";
+        assert unsigned(P2) = 31;
         finish <= '1';
         wait;
     end process;

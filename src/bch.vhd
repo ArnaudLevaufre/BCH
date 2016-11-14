@@ -153,7 +153,7 @@ begin
 
         addr <= (1 => '1', others => '0');
         w <= '1';
-        D_in <= "01100011100011100000111001010110"; -- 3 errors
+        D_in <= "01100011100011100010111001010110"; -- > 2 errors
         wait for 40 ns;
         D_in <= "01100011100011100000111001010111"; -- 2 errors
         wait for 40 ns;
@@ -170,7 +170,7 @@ begin
         r <= '1';
         addr <= (1 => '1', others => '0');
         wait for 1 ns;
-        assert D_out = X"030E0E56";
+        assert D_out = X"030E2E56";
         wait for 40 ns;
         assert D_out = X"020E1C57";
         wait for 40 ns;

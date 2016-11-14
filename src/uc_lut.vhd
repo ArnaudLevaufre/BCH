@@ -42,19 +42,10 @@ begin
                 if start_lut = '1' then
                     next_state <= LUT;
                     RAZ <= '1';
-                    LD_P2 <= '1';
                     LD_SYNDROME <= '1';
                 end if;
             when LUT =>
-                if P1_MAX = '1' and P2_MAX = '1'then
-                    end_lut <= '1';
-                    next_state <= IDLE;
-                    LD_ERR <= '1';
-                    ERR <= "11";
-                elsif P2_MAX = '1' then
-                    INC_P1 <= '1';
-                    LD_P2 <= '1';
-                elsif ERR1 = '1' then
+                if ERR1 = '1' then
                     end_lut <= '1';
                     next_state <= IDLE;
                     LD_ERR <= '1';
@@ -64,6 +55,14 @@ begin
                     next_state <= IDLE;
                     LD_ERR <= '1';
                     ERR <= "10";
+                elsif P1_MAX = '1' and P2_MAX = '1' then
+                    end_lut <= '1';
+                    next_state <= IDLE;
+                    LD_ERR <= '1';
+                    ERR <= "11";
+                elsif P2_MAX = '1' then
+                    INC_P1 <= '1';
+                    LD_P2 <= '1';
                 elsif P1_MAX = '0' or P2_MAX = '0' then
                     INC_P2 <= '1';
                 end if;
@@ -128,7 +127,6 @@ begin
         wait for 1 ns;
         assert ld_syndrome = '1';
         assert raz = '1';
-        assert LD_P2 = '1';
         wait for 19 ns;
         start_lut <= '0';
         assert ld_syndrome = '0';

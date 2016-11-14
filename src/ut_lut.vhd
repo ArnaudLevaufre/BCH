@@ -64,20 +64,20 @@ begin
             end if;
             if RAZ = '1' then
                 R_P1 <= (others => '0');
-            end if;
-            if LD_P2 = '1' then
+                R_P2 <= (0 => '1', others => '0');
+            elsif LD_P2 = '1' then
                 R_P2 <= R_P1;
             end if;
         end if;
     end process;
 
-    S1 <= table(TO_INTEGER(unsigned(R_P1)));
-    S2 <= table(TO_INTEGER(unsigned(R_P2) + 1));
+    S1 <= table(TO_INTEGER(unsigned(R_P1) - 1)) when unsigned(R_P1) > 0;
+    S2 <= table(TO_INTEGER(unsigned(R_P2)));
     S1xS2 <= S1 xor S2;
-    ERR1 <= '1' when S1 = R_SYNDROME else '0';
-    ERR2 <= '1' when S1xS2 = R_SYNDROME else '0';
-    P1_MAX <= '1' when unsigned(R_P1) = 29 else '0';
-    P2_MAX <= '1' when (unsigned(R_P2) + 1) = 30 else '0';
+    ERR1 <= '1' when S2 = R_SYNDROME else '0';
+    ERR2 <= '1' when S1xS2 = R_SYNDROME and unsigned (R_P1) > 0 else '0';
+    P1_MAX <= '1' when unsigned(R_P1) = 30 else '0';
+    P2_MAX <= '1' when (unsigned(R_P2) + 1) = 31 else '0';
     P1 <= R_P1;
     P2 <= std_logic_vector(unsigned(R_P2) + 1);
 end arch_ut_lut;
@@ -117,7 +117,7 @@ begin
         INC_P2 => INC_P2,
         LD_SYNDROME => LD_SYNDROME,
         RAZ => RAZ,
-        LD_P2 => output(1),
+        LD_P2 => LD_P2,
         SYNDROME => SYNDROME,
         P1_MAX => output(0),
         P2_MAX => output(1),
@@ -130,9 +130,10 @@ begin
     stim_proc: process
     begin
         RAZ <= '1';
-        LD_P2 <= '1';
         wait for 105 ns;
         RAZ <= '0';
+        LD_P2 <= '1';
+        wait for 40 ns;
         LD_P2 <= '0';
         SYNDROME <= "0000000001";
         LD_SYNDROME <= '1';
@@ -141,9 +142,9 @@ begin
         assert SYNDROME = "0000000001";
         assert unsigned(P1) = 0;
         assert unsigned(P2) = 1;
-        assert ERR1 = '1';
         INC_P1 <= '1';
         INC_P2 <= '1';
+        assert ERR1 = '1';
         wait for 40 ns;
         LD_SYNDROME <= '0';
         assert unsigned(P1) = 1;
@@ -152,6 +153,7 @@ begin
         assert unsigned(P1) = 2;
         SYNDROME <= "0000011000";
         LD_SYNDROME <= '1';
+        wait for 40 ns;
         wait for 40 ns;
         INC_P1 <= '0';
         INC_P2 <= '0';

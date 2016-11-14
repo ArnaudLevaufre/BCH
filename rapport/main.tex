@@ -351,6 +351,7 @@
 
                     \draw[<-] (p2counter.Inc) -- +(-2, 0) node [anchor=east] {Inc\_P2};
                     \draw[<-] (p2counter.Ld) -- +(-2, 0) node [anchor=east] {Ld\_P2};
+                    \draw[<-] (p2counter.Raz) -- +(-2, 0) node [anchor=east] {Raz};
 
                     \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) -- +(-3, -4) |- (p2counter.Data);
                     \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) |- (lut.Pone);
@@ -394,7 +395,7 @@
                     \node[state](E2)[below of=E1]{Look up};
 
                     \path[->] (E1) edge [loop right] node {!start\_lut} (E1);
-                    \path[->] (E1) edge node {start\_lut / raz, ld\_p2, ld\_syndrome} (E2);
+                    \path[->] (E1) edge node {start\_lut / raz, ld\_syndrome} (E2);
 
                     \path[->] (E2) edge [loop right] node  {p2\_max / inc\_p1, ld\_p2} (E2);
                     \path[->] (E2) edge [loop below] node {!p1\_max . !p2\_max / inc\_p2} (E2);
