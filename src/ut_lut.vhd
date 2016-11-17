@@ -71,7 +71,7 @@ begin
         end if;
     end process;
 
-    S1 <= table(TO_INTEGER(unsigned(R_P1) - 1)) when unsigned(R_P1) > 0;
+    S1 <= table(TO_INTEGER(unsigned(R_P1) - 1)) when unsigned(R_P1) > 0 else (others => '0');
     S2 <= table(TO_INTEGER(unsigned(R_P2)));
     S1xS2 <= S1 xor S2;
     ERR1 <= '1' when S2 = R_SYNDROME else '0';
