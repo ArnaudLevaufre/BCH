@@ -15,6 +15,8 @@
 \tikzset{every ucsyndrome node/.style={draw,minimum width=5cm,minimum height=2cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 \tikzset{every counter node/.style={draw,minimum width=2cm,minimum height=4cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 \tikzset{every lut node/.style={draw,minimum width=2cm,minimum height=2cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
+\tikzset{every utlut node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
+\tikzset{every uclut node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 
 
 %
@@ -820,6 +822,369 @@
 
         \pgf@anchor@lut@Stwo
         \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{S2}}
+
+        \endgroup
+    }
+}
+
+%
+% UT Lut
+%
+
+\pgfdeclareshape{utlut}{
+  % The 'minimum width' and 'minimum height' keys, not the content, determine
+  % the size
+    \savedanchor\northeast{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=0.5\pgf@x
+        \pgf@y=0.5\pgf@y
+    }
+  % This is redundant, but makes some things easier:
+    \savedanchor\southwest{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=-0.5\pgf@x
+        \pgf@y=-0.5\pgf@y
+    }
+    % Inherit from rectangle
+    \inheritanchorborder[from=rectangle]
+
+    % Define same anchor a normal rectangle has
+    \anchor{center}{\pgfpointorigin}
+    \anchor{north}{\northeast \pgf@x=0pt}
+    \anchor{east}{\northeast \pgf@y=0pt}
+    \anchor{south}{\southwest \pgf@x=0pt}
+    \anchor{west}{\southwest \pgf@y=0pt}
+    \anchor{north east}{\northeast}
+    \anchor{north west}{\northeast \pgf@x=-\pgf@x}
+    \anchor{south west}{\southwest}
+    \anchor{south east}{\southwest \pgf@x=-\pgf@x}
+    \anchor{text}{
+        \pgfpointorigin
+        \advance\pgf@x by -.5\wd\pgfnodeparttextbox%
+        \advance\pgf@y by -.5\ht\pgfnodeparttextbox%
+        \advance\pgf@y by +.5\dp\pgfnodeparttextbox%
+    }
+
+    % Define anchors for signal ports
+
+    \anchor{Syndrome}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0\pgf@y%
+    }
+
+    \anchor{CLK}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=-.75\pgf@y%
+    }
+
+    \anchor{Raz}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.75\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+
+    \anchor{LdPtwo}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.5625\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+
+    \anchor{LdSyndrome}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.375\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+
+    \anchor{IncPone}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.1875\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+
+    \anchor{IncPtwo}{
+        \pgf@process{\northeast}%
+        \pgf@x=0\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+
+    \anchor{PoneMax}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.1875\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+    \anchor{PtwoMax}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.375\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+    \anchor{ErrOne}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.5625\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+    \anchor{ErrTwo}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.75\pgf@x%
+        \pgf@y=1\pgf@y%
+    }
+
+    % Draw the rectangle box and the port labels
+    \backgroundpath{
+        % Rectangle box
+        \pgfpathrectanglecorners{\southwest}{\northeast}
+        % Angle (>) for clock input
+        \pgf@anchor@utlut@CLK
+        \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+        \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+        \pgf@xc=\pgf@x \pgf@yc=\pgf@y
+        \pgfmathsetlength\pgf@x{0.5ex} % size depends on font size
+        \advance\pgf@ya by \pgf@x
+        \advance\pgf@xb by \pgf@x
+        \advance\pgf@yc by -\pgf@x
+        \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+        \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+        \pgfclosepath
+
+        % Draw port labels
+        \begingroup
+        \tikzset{port labels} % Use font from this style
+        \tikz@textfont
+
+        \pgf@anchor@utlut@Syndrome
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Syndrome}}
+
+        \pgf@anchor@utlut@CLK
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{CLK}}
+
+        \pgf@anchor@utlut@Raz
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Raz}}
+
+        \pgf@anchor@utlut@LdPtwo
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_P2}}
+
+        \pgf@anchor@utlut@LdSyndrome
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_Syndrome}}
+
+        \pgf@anchor@utlut@IncPone
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{IncP1}}
+
+        \pgf@anchor@utlut@IncPtwo
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{IncP2}}
+
+        \pgf@anchor@utlut@PoneMax
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{P1Max}}
+
+        \pgf@anchor@utlut@PtwoMax
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{P2Max}}
+
+        \pgf@anchor@utlut@ErrOne
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Err1}}
+
+        \pgf@anchor@utlut@ErrTwo
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Err2}}
+        \endgroup
+    }
+}
+
+%
+% UC Lut
+%
+
+\pgfdeclareshape{uclut}{
+  % The 'minimum width' and 'minimum height' keys, not the content, determine
+  % the size
+    \savedanchor\northeast{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=0.5\pgf@x
+        \pgf@y=0.5\pgf@y
+    }
+  % This is redundant, but makes some things easier:
+    \savedanchor\southwest{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=-0.5\pgf@x
+        \pgf@y=-0.5\pgf@y
+    }
+    % Inherit from rectangle
+    \inheritanchorborder[from=rectangle]
+
+    % Define same anchor a normal rectangle has
+    \anchor{center}{\pgfpointorigin}
+    \anchor{north}{\northeast \pgf@x=0pt}
+    \anchor{east}{\northeast \pgf@y=0pt}
+    \anchor{south}{\southwest \pgf@x=0pt}
+    \anchor{west}{\southwest \pgf@y=0pt}
+    \anchor{north east}{\northeast}
+    \anchor{north west}{\northeast \pgf@x=-\pgf@x}
+    \anchor{south west}{\southwest}
+    \anchor{south east}{\southwest \pgf@x=-\pgf@x}
+    \anchor{text}{
+        \pgfpointorigin
+        \advance\pgf@x by -.5\wd\pgfnodeparttextbox%
+        \advance\pgf@y by -.5\ht\pgfnodeparttextbox%
+        \advance\pgf@y by +.5\dp\pgfnodeparttextbox%
+    }
+
+    % Define anchors for signal ports
+
+    \anchor{Start}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0.5\pgf@y%
+    }
+
+    \anchor{Reset}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0.25\pgf@y%
+    }
+
+    \anchor{CLK}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0\pgf@y%
+    }
+
+    \anchor{End}{
+        \pgf@process{\northeast}%
+        \pgf@y=0.5\pgf@y%
+    }
+
+    \anchor{Err}{
+        \pgf@process{\northeast}%
+        \pgf@y=0.25\pgf@y%
+    }
+
+    \anchor{LdErr}{
+        \pgf@process{\northeast}%
+        \pgf@y=0\pgf@y%
+    }
+
+    \anchor{Raz}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.75\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{LdPtwo}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.5625\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{LdSyndrome}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.375\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{IncPone}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.1875\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{IncPtwo}{
+        \pgf@process{\northeast}%
+        \pgf@x=0\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{PoneMax}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.1875\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+    \anchor{PtwoMax}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.375\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+    \anchor{ErrOne}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.5625\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+    \anchor{ErrTwo}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.75\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+
+    % Draw the rectangle box and the port labels
+    \backgroundpath{
+        % Rectangle box
+        \pgfpathrectanglecorners{\southwest}{\northeast}
+        % Angle (>) for clock input
+        \pgf@anchor@uclut@CLK
+        \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+        \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+        \pgf@xc=\pgf@x \pgf@yc=\pgf@y
+        \pgfmathsetlength\pgf@x{0.5ex} % size depends on font size
+        \advance\pgf@ya by \pgf@x
+        \advance\pgf@xb by \pgf@x
+        \advance\pgf@yc by -\pgf@x
+        \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+        \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+        \pgfclosepath
+
+        % Draw port labels
+        \begingroup
+        \tikzset{port labels} % Use font from this style
+        \tikz@textfont
+
+        \pgf@anchor@uclut@Start
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Start}}
+
+        \pgf@anchor@uclut@Reset
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Reset}}
+
+        \pgf@anchor@uclut@CLK
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{CLK}}
+
+        \pgf@anchor@uclut@End
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{End}}
+
+        \pgf@anchor@uclut@Err
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Err}}
+
+        \pgf@anchor@uclut@LdErr
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Ld\_Err}}
+
+        \pgf@anchor@uclut@Raz
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Raz}}
+
+        \pgf@anchor@uclut@LdPtwo
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_P2}}
+
+        \pgf@anchor@uclut@LdSyndrome
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_Syndrome}}
+
+        \pgf@anchor@uclut@IncPone
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{IncP1}}
+
+        \pgf@anchor@uclut@IncPtwo
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{IncP2}}
+
+        \pgf@anchor@uclut@PoneMax
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{P1Max}}
+
+        \pgf@anchor@uclut@PtwoMax
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{P2Max}}
+
+        \pgf@anchor@uclut@ErrOne
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Err1}}
+
+        \pgf@anchor@uclut@ErrTwo
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Err2}}
 
         \endgroup
     }

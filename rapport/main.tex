@@ -381,6 +381,8 @@
                     \node at (10, 8.5)[anchor=south west] {10};
                     \node at (10, 7.5)[anchor=south west] {10};
 
+                    \draw[-,dashed] (2.5,2) -- (15.5, 2) -- (15.5, 16) -- (2.5, 16) -- (2.5, 2);
+
                 \end{tikzpicture}
                 \caption{Unité de traitement de la Look up table.}
                 \label{fig:me_syndrome}
@@ -413,6 +415,42 @@
             \end{figure}
 
             \subsection{Définition des connexions entre l'UC et l'UT}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth, scale=0.7, every node/.style={scale=0.7}, circuit logic US]
+                    %\draw[help lines] (0, 0) grid (20,20);
+                    \node[shape=uclut] at (5, 11) (uclut) {UC\_Lut};
+                    \node[shape=utlut] at (5, 5) (utlut) {UT\_Lut};
+
+                    \draw[->] (uclut.Raz) -- (utlut.Raz);
+                    \draw[->] (uclut.LdPtwo) -- (utlut.LdPtwo);
+                    \draw[->] (uclut.LdSyndrome) -- (utlut.LdSyndrome);
+                    \draw[->] (uclut.IncPone) -- (utlut.IncPone);
+                    \draw[->] (uclut.IncPtwo) -- (utlut.IncPtwo);
+
+                    \draw[->] (utlut.PoneMax) -- (uclut.PoneMax);
+                    \draw[->] (utlut.PtwoMax) -- (uclut.PtwoMax);
+                    \draw[->] (utlut.ErrOne) -- (uclut.ErrOne);
+                    \draw[->] (utlut.ErrTwo) -- (uclut.ErrTwo);
+
+                    \draw[<-] (uclut.Start) -- +(-2, 0) node[anchor=east] {Start\_lut};
+                    \draw[<-] (uclut.Reset) -- +(-2, 0) node[anchor=east] {Reset};
+
+                    \draw[->] (uclut.End) -- +(2, 0) node[anchor=west] {End\_lut};
+                    \draw[->, double] (uclut.Err) -- +(2, 0) node[anchor=west] {Err};
+                    \draw[->] (uclut.LdErr) -- +(2, 0) node[anchor=west] {Ld\_Err};
+
+                    \draw[<-, double] (utlut.Syndrome) -- +(-2,0) node[anchor=east] {Syndrome};
+
+                    \node at (7.5, 11.6)[anchor=south west] {2};
+                    \node at (2.5, 5)[anchor=south east] {10};
+
+                    \draw[-,dashed] (1.5, 1.5) -- (8.5, 1.5) -- (8.5, 14.5) -- (1.5, 14.5) -- (1.5, 1.5);
+
+                \end{tikzpicture}
+                \caption{Connexions entre l'UC et l'UT de la look up table}
+                \label{fig:me_syndrome}
+            \end{figure}
 
 
         \section{Correcteur}
