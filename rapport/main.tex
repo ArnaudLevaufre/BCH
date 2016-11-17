@@ -521,6 +521,9 @@
                     \draw[->] (orsel.output) -- (muxcmp2.west);
                     \draw[->, double] (counter.Q) -| (cmp2.south);
                     \draw[->, double] (counter.Q) -| (cmp1.north);
+                    \draw[->, double] (counter.Q) -- +(16, 0) node[anchor=west] {Count};
+
+                    \draw[<-] (counter.Inc) -- +(-0.5, 0) node[anchor=east] {1};
 
                     \draw[->, double] (14, 5) -- +(6, 0) node[anchor=west] {D\_corr\_out};
 
@@ -551,7 +554,27 @@
                 \caption{Unité de traitement du correcteur}
                 \label{fig:me_syndrome}
             \end{figure}
+
             \subsection{Unité de contrôle}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm]
+                    \tikzstyle{every initial by arrow} = [initial text=reset, text=red, -, draw=red, decorate, decoration=zigzag]
+
+                    \node[state, accepting, initial](E1){Idle};
+                    \node[state](E2)[below of=E1]{Correction};
+                    \node[right of=E1, right=-3.5cm]{Raz};
+
+                    \path[->] (E1) edge [loop above] node {!start\_corr} (E1);
+                    \path[->] (E1) edge node {start\_corr / ld\_buff} (E2);
+
+                    \path[->] (E2) edge [loop right] node {Count != 21 / Dec\_buf, Ld\_corr} (E2);
+                    \path[->] (E2) edge [bend left] node {Count = 21 / end\_corr} (E1);
+
+                \end{tikzpicture}
+                \caption{Machine à état utilisée pour la correction d'erreur}
+                \label{fig:me_syndrome}
+            \end{figure}
             \subsection{Définition des connexions entre l'UC et l'UT}
 
     \begin{thebibliography}{99}
