@@ -16,7 +16,7 @@ entity avalon is
 
         ask_irq: in std_logic;
         words: out unsigned(1 downto 0);
-        decode, irq: out std_logic;
+        decode, irq_n: out std_logic;
 
         corr_out: in std_logic_vector(31 downto 0);
         corr_out_ld: in std_logic;
@@ -80,7 +80,7 @@ begin
     decode <= in_decode;
     FifoIn <= corr_out when corr_out_ld = '1' else D_in;
     FifoOut <= in_FifoOut;
-    irq <= in_irq;
+    irq_n <= in_irq;
     D_out <= (0 => in_irq, 1 => in_empty, 2 => in_full, others => '0') when r = '1' and unsigned(addr) = 0 else
              (0 => in_decode, 1 => in_irqEn, others => '0') when r = '1' and unsigned(addr) = 1 else
               in_FifoOut when unsigned(addr) = 2 and r = '1' else (others => '0');

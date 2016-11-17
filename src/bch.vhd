@@ -6,12 +6,12 @@ use work.all;
 entity bch is
     port(
         clk: in std_logic;
-        reset: in std_logic;
+        reset_n: in std_logic;
         r, w: in std_logic;
         D_in: in std_logic_vector(31 downto 0);
         D_out: out std_logic_vector(31 downto 0);
         addr: in std_logic_vector(1 downto 0);
-        irq: out std_logic
+        irq_n: out std_logic
     );
 end bch;
 
@@ -27,7 +27,9 @@ architecture arch_bch of bch is
     signal P2: std_logic_vector(4 downto 0) := (others => '0');
     signal ERR: std_logic_vector(1 downto 0);
     signal initFifo: std_logic;
+    signal reset: std_logic;
 begin
+    reset <= '1' when reset_n = '0' else '0';
     comp_avalon: entity avalon port map(
         clk => clk,
         reset => reset,
@@ -45,7 +47,7 @@ begin
         words => words,
         FifoOut => FifoOut,
         initFifo => initFifo,
-        irq => irq
+        irq_n => irq_n
     );
 
     comp_uc_master: entity uc_master port map(
@@ -120,9 +122,9 @@ entity bch_test is
 end bch_test;
 
 architecture arch_bch_test of bch_test is
-    signal finish, irq: std_logic;
+    signal finish, irq_n: std_logic;
     signal clk: std_logic;
-    signal reset: std_logic;
+    signal reset_n: std_logic;
     signal r, w: std_logic;
     signal D_in: std_logic_vector(31 downto 0) := (others => '0');
     signal D_out: std_logic_vector(31 downto 0);
@@ -130,21 +132,21 @@ architecture arch_bch_test of bch_test is
 begin
     in_bch: entity bch port map(
         clk => clk,
-        reset => reset,
+        reset_n => reset_n,
         r => r,
         w => w,
         D_in => D_in,
         D_out => D_out,
         addr => addr,
-        irq => irq
+        irq_n => irq_n
     );
 
     process begin
         r <= '0';
         w <= '0';
-        reset <= '1';
+        reset_n <= '0';
         wait for 41 ns;
-        reset <= '0';
+        reset_n <= '1';
 
         r <= '1';
         addr <= (1 => '0', others => '0');
@@ -165,7 +167,7 @@ begin
         D_in <= (0 => '1', 1 => '1', others => '0');
         wait for 40 ns;
         w <= '0';
-        wait until irq = '0';
+        wait until irq_n = '0';
         wait for 400 ns;
         r <= '1';
         addr <= (1 => '1', others => '0');
@@ -180,7 +182,7 @@ begin
         wait for 40 ns;
         addr <= (others => '0');
         wait for 40 ns;
-        assert irq = '1';
+        assert irq_n = '1';
 
         finish <= '1';
         wait;
