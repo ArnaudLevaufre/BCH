@@ -1041,6 +1041,14 @@
         \pgf@x=0.75\pgf@x%
         \pgf@y=1\pgf@y%
     }
+    \anchor{Pone}{
+        \pgf@process{\northeast}%
+        \pgf@y=0.5\pgf@y%
+    }
+    \anchor{Ptwo}{
+        \pgf@process{\northeast}%
+        \pgf@y=-0.5\pgf@y%
+    }
 
     % Draw the rectangle box and the port labels
     \backgroundpath{
@@ -1071,6 +1079,12 @@
         \pgf@anchor@utlut@CLK
         \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{CLK}}
 
+        \pgf@anchor@utlut@Pone
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{P1}}
+
+        \pgf@anchor@utlut@Ptwo
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{P2}}
+
         \pgf@anchor@utlut@Raz
         \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Raz}}
 
@@ -1097,6 +1111,7 @@
 
         \pgf@anchor@utlut@ErrTwo
         \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Err2}}
+
         \endgroup
     }
 }

@@ -356,9 +356,11 @@
                     \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) -- +(-3, -4) |- (p2counter.Data);
                     \draw[->, double] (p1counter.Q) -- +(1, 0) -- +(1, -4) |- (lut.Pone);
                     \draw[->, double] (p1counter.Q) -- +(1, 0) |- (p1max.west);
+                    \draw[->, double] (p1counter.Q) -| +(1, -2) -- +(10.25, -2) node[anchor=west] {P1};
 
                     \draw[->, double] (p2counter.Q) -- +(1, 0) |- (lut.Ptwo);
                     \draw[->, double] (p2counter.Q) -- +(1, 0) |- (p2max.west);
+                    \draw[->, double] (p2counter.Q) -- +(10.25, 0) node[anchor=west] {P2};
 
                     \draw[->, double] (lut.Sone) -- +(1, 0) |- (xor.input 1);
                     \draw[->, double] (lut.Sone) -- +(1, 0) |- (cmp1.west);
@@ -439,6 +441,9 @@
                     \draw[->] (uclut.End) -- +(2, 0) node[anchor=west] {End\_lut};
                     \draw[->, double] (uclut.Err) -- +(2, 0) node[anchor=west] {Err};
                     \draw[->] (uclut.LdErr) -- +(2, 0) node[anchor=west] {Ld\_Err};
+
+                    \draw[->] (utlut.Pone) -- +(2, 0) node[anchor=west] {P1};
+                    \draw[->] (utlut.Ptwo) -- +(2, 0) node[anchor=west] {P2};
 
                     \draw[<-, double] (utlut.Syndrome) -- +(-2,0) node[anchor=east] {Syndrome};
 
