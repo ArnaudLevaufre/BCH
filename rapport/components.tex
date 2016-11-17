@@ -18,6 +18,8 @@
 \tikzset{every lut node/.style={draw,minimum width=2cm,minimum height=2cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 \tikzset{every utlut node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 \tikzset{every uclut node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
+\tikzset{every uccorr node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
+\tikzset{every utcorr node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 
 
 %
@@ -1310,6 +1312,323 @@
 
         \pgf@anchor@uclut@ErrTwo
         \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Err2}}
+
+        \endgroup
+    }
+}
+
+%
+% UC Coor
+%
+
+\pgfdeclareshape{uccorr}{
+  % The 'minimum width' and 'minimum height' keys, not the content, determine
+  % the size
+    \savedanchor\northeast{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=0.5\pgf@x
+        \pgf@y=0.5\pgf@y
+    }
+  % This is redundant, but makes some things easier:
+    \savedanchor\southwest{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=-0.5\pgf@x
+        \pgf@y=-0.5\pgf@y
+    }
+    % Inherit from rectangle
+    \inheritanchorborder[from=rectangle]
+
+    % Define same anchor a normal rectangle has
+    \anchor{center}{\pgfpointorigin}
+    \anchor{north}{\northeast \pgf@x=0pt}
+    \anchor{east}{\northeast \pgf@y=0pt}
+    \anchor{south}{\southwest \pgf@x=0pt}
+    \anchor{west}{\southwest \pgf@y=0pt}
+    \anchor{north east}{\northeast}
+    \anchor{north west}{\northeast \pgf@x=-\pgf@x}
+    \anchor{south west}{\southwest}
+    \anchor{south east}{\southwest \pgf@x=-\pgf@x}
+    \anchor{text}{
+        \pgfpointorigin
+        \advance\pgf@x by -.5\wd\pgfnodeparttextbox%
+        \advance\pgf@y by -.5\ht\pgfnodeparttextbox%
+        \advance\pgf@y by +.5\dp\pgfnodeparttextbox%
+    }
+
+    % Define anchors for signal ports
+
+    \anchor{Start}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0.75\pgf@y%
+    }
+
+    \anchor{Reset}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0.375\pgf@y%
+    }
+
+    \anchor{CLK}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0\pgf@y%
+    }
+
+
+    \anchor{End}{
+        \pgf@process{\northeast}%
+        \pgf@y=0\pgf@y%
+    }
+
+
+    \anchor{Raz}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.75\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{DecBuf}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.375\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{LdBuf}{
+        \pgf@process{\northeast}%
+        \pgf@x=0\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{LdCorr}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.375\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    \anchor{Count}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.75\pgf@x%
+        \pgf@y=-1\pgf@y%
+    }
+
+    % Draw the rectangle box and the port labels
+    \backgroundpath{
+        % Rectangle box
+        \pgfpathrectanglecorners{\southwest}{\northeast}
+        % Angle (>) for clock input
+        \pgf@anchor@uccorr@CLK
+        \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+        \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+        \pgf@xc=\pgf@x \pgf@yc=\pgf@y
+        \pgfmathsetlength\pgf@x{0.5ex} % size depends on font size
+        \advance\pgf@ya by \pgf@x
+        \advance\pgf@xb by \pgf@x
+        \advance\pgf@yc by -\pgf@x
+        \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+        \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+        \pgfclosepath
+
+        % Draw port labels
+        \begingroup
+        \tikzset{port labels} % Use font from this style
+        \tikz@textfont
+
+        \pgf@anchor@uccorr@Start
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Start}}
+
+        \pgf@anchor@uccorr@Reset
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Reset}}
+
+        \pgf@anchor@uccorr@CLK
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{CLK}}
+
+        \pgf@anchor@uccorr@End
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{End}}
+
+
+
+        \pgf@anchor@uccorr@Raz
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Raz}}
+
+        \pgf@anchor@uccorr@DecBuf
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Dec\_Buf}}
+
+        \pgf@anchor@uccorr@LdBuf
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_Buf}}
+
+        \pgf@anchor@uccorr@LdCorr
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_Corr}}
+
+        \pgf@anchor@uccorr@Count
+        \pgftext[base,at={\pgfpoint{\pgf@x}{\pgf@y}},y=\pgfshapeinnerxsep]{\rotatebox{90}{Count}}
+
+        \endgroup
+    }
+}
+
+%
+% UT Coor
+%
+
+\pgfdeclareshape{utcorr}{
+  % The 'minimum width' and 'minimum height' keys, not the content, determine
+  % the size
+    \savedanchor\northeast{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=0.5\pgf@x
+        \pgf@y=0.5\pgf@y
+    }
+  % This is redundant, but makes some things easier:
+    \savedanchor\southwest{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=-0.5\pgf@x
+        \pgf@y=-0.5\pgf@y
+    }
+    % Inherit from rectangle
+    \inheritanchorborder[from=rectangle]
+
+    % Define same anchor a normal rectangle has
+    \anchor{center}{\pgfpointorigin}
+    \anchor{north}{\northeast \pgf@x=0pt}
+    \anchor{east}{\northeast \pgf@y=0pt}
+    \anchor{south}{\southwest \pgf@x=0pt}
+    \anchor{west}{\southwest \pgf@y=0pt}
+    \anchor{north east}{\northeast}
+    \anchor{north west}{\northeast \pgf@x=-\pgf@x}
+    \anchor{south west}{\southwest}
+    \anchor{south east}{\southwest \pgf@x=-\pgf@x}
+    \anchor{text}{
+        \pgfpointorigin
+        \advance\pgf@x by -.5\wd\pgfnodeparttextbox%
+        \advance\pgf@y by -.5\ht\pgfnodeparttextbox%
+        \advance\pgf@y by +.5\dp\pgfnodeparttextbox%
+    }
+
+    % Define anchors for signal ports
+
+    \anchor{Data}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0.25\pgf@y%
+    }
+
+    \anchor{Pone}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0\pgf@y%
+    }
+
+    \anchor{Ptwo}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=-0.25\pgf@y%
+    }
+
+    \anchor{Reset}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=-0.5\pgf@y%
+    }
+
+    \anchor{CLK}{
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=-0.75\pgf@y%
+    }
+
+
+    \anchor{DCorrOut}{
+        \pgf@process{\northeast}%
+        \pgf@y=-0.5\pgf@y%
+    }
+
+
+    \anchor{Raz}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.75\pgf@x%
+    }
+
+    \anchor{DecBuf}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0.375\pgf@x%
+    }
+
+    \anchor{LdBuf}{
+        \pgf@process{\northeast}%
+        \pgf@x=-0\pgf@x%
+    }
+
+    \anchor{LdCorr}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.375\pgf@x%
+    }
+
+    \anchor{Count}{
+        \pgf@process{\northeast}%
+        \pgf@x=0.75\pgf@x%
+    }
+
+    % Draw the rectangle box and the port labels
+    \backgroundpath{
+        % Rectangle box
+        \pgfpathrectanglecorners{\southwest}{\northeast}
+        % Angle (>) for clock input
+        \pgf@anchor@utcorr@CLK
+        \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+        \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+        \pgf@xc=\pgf@x \pgf@yc=\pgf@y
+        \pgfmathsetlength\pgf@x{0.5ex} % size depends on font size
+        \advance\pgf@ya by \pgf@x
+        \advance\pgf@xb by \pgf@x
+        \advance\pgf@yc by -\pgf@x
+        \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+        \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+        \pgfclosepath
+
+        % Draw port labels
+        \begingroup
+        \tikzset{port labels} % Use font from this style
+        \tikz@textfont
+
+        \pgf@anchor@utcorr@Data
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Data}}
+
+        \pgf@anchor@utcorr@Pone
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{P1}}
+
+        \pgf@anchor@utcorr@Ptwo
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{P2}}
+
+        \pgf@anchor@utcorr@Reset
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Reset}}
+
+        \pgf@anchor@utcorr@CLK
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{CLK}}
+
+        \pgf@anchor@utcorr@DCorrOut
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{D\_corr\_out}}
+
+        \pgf@anchor@utcorr@Raz
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Raz}}
+
+        \pgf@anchor@utcorr@DecBuf
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Dec\_Buf}}
+
+        \pgf@anchor@utcorr@LdBuf
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_Buf}}
+
+        \pgf@anchor@utcorr@LdCorr
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Ld\_Corr}}
+
+        \pgf@anchor@utcorr@Count
+        \pgftext[top,at={\pgfpoint{\pgf@x}{\pgf@y}},y=-\pgfshapeinnerxsep]{\rotatebox{90}{Count}}
 
         \endgroup
     }

@@ -575,7 +575,41 @@
                 \caption{Machine à état utilisée pour la correction d'erreur}
                 \label{fig:me_syndrome}
             \end{figure}
+
             \subsection{Définition des connexions entre l'UC et l'UT}
+
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth, scale=0.6, every node/.style={scale=0.6}, circuit logic US]
+                    %\draw[help lines] (0, 0) grid (20,20);
+
+                    \node[shape=uccorr] at (5, 11) (uccorr) {UC\_Corr};
+                    \node[shape=utcorr] at (5, 5) (utcorr) {UT\_Corr};
+
+                    \draw[->](uccorr.Raz) -- (utcorr.Raz);
+                    \draw[->](uccorr.DecBuf) -- (utcorr.DecBuf);
+                    \draw[->](uccorr.LdBuf) -- (utcorr.LdBuf);
+                    \draw[->](uccorr.LdCorr) -- (utcorr.LdCorr);
+
+                    \draw[->](utcorr.Count) -- (uccorr.Count);
+
+                    \draw[<-](uccorr.Start) -- +(-2, 0) node[anchor=east] {Start\_Corr};
+                    \draw[<-](uccorr.Reset) -- +(-2, 0) node[anchor=east] {Reset};
+
+                    \draw[->](uccorr.End) -- +(2, 0) node[anchor=west] {End\_corr};
+
+                    \draw[<-,double](utcorr.Data) -- +(-2, 0) node[anchor=east] {FifoOut};
+                    \draw[<-](utcorr.Pone) -- +(-2, 0) node[anchor=east] {P1};
+                    \draw[<-](utcorr.Ptwo) -- +(-2, 0) node[anchor=east] {P2};
+                    \draw[<-](utcorr.Reset) -- +(-2, 0) node[anchor=east] {Reset};
+                    \draw[->](utcorr.DCorrOut) -- +(2, 0) node[anchor=west] {D\_Corr\_Out};
+
+                    \draw[dashed](1.5, 1.5) -- (8.5, 1.5) -- (8.5, 14.5) -- (1.5, 14.5) -- (1.5, 1.5);
+
+                \end{tikzpicture}
+                \caption{Définition des connexions entre l'UC et l'UT du correcteur}
+                \label{fig:me_syndrome}
+            \end{figure}
 
     \begin{thebibliography}{99}
         %\bibitem{openlayers} Openlayers, \url{http://openlayers.org/}
