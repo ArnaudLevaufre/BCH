@@ -15,7 +15,7 @@
 \usepackage{pst-circ}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows, arrows.spaced ,automata, snakes, circuits.logic.US, calc}
+\usetikzlibrary{arrows, arrows.spaced ,automata, snakes, circuits.logic.US, calc, shapes.geometric}
 
 \tikzstyle{block} = [draw]
 \tikzstyle{asyncblock} = [draw]
@@ -454,6 +454,100 @@
 
 
         \section{Correcteur}
+            \subsection{Unité de traitement}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth, scale=0.6, every node/.style={scale=0.6}, circuit logic US]
+                    %\draw[help lines] (0, 0) grid (20,20);
+
+                    \node[shape=srr] at (3, 3) (srr) {};
+                    \node[not gate] at (5, 2) (not) {};
+
+                    \node[trapezium, draw, rotate=-90, scale=3] at (10, 2.5) (muxcorr) {};
+                    \draw (muxcorr.south west) -- +(0,0) node[anchor=west] {0};
+                    \draw (muxcorr.south east) -- +(0,0) node[anchor=west] {1};
+
+                    \node[shape=counter] at (3, 10) (counter) {};
+
+                    \node[circle, draw] at (6, 12) (cmp2) {=};
+                    \node[circle, draw] at (6, 8) (cmp1) {=};
+
+                    \node[trapezium, draw, rotate=-90, scale=3] at (9, 12) (muxcmp2) {};
+                    \draw (muxcmp2.south west) -- +(0,0) node[anchor=west] {1};
+                    \draw (muxcmp2.south east) -- +(0,0) node[anchor=west] {0};
+
+                    \node[trapezium, draw, rotate=-90, scale=3] at (9, 8) (muxcmp1) {};
+                    \draw (muxcmp1.south west) -- +(0,0) node[anchor=west] {0};
+                    \draw (muxcmp1.south east) -- +(0,0) node[anchor=west] {1};
+
+                    \node[or gate, rotate=-90] at (10, 6) (orcorr) {};
+                    \node[or gate, rotate=-90] at (9, 14) (orsel) {};
+
+                    \node[shape=pile] at (13, 2) (pile) {};
+
+                    \draw[<-] (counter.Raz) -- +(-2, 0) node[anchor=east] {Raz};
+                    \draw[<-, double] (srr.Din) -- +(-2, 0) node[anchor=east] {Din};
+                    \draw[<-] (srr.Ld) -- +(-2, 0) node[anchor=east] {Ld\_buf};
+                    \draw[<-] (srr.Shift) -- +(-2, 0) node[anchor=east] {Dec\_Buf};
+                    \draw[<-] (pile.Raz) -| +(-0.25, -1) -- +(-12, -1) node[anchor=east] {Raz};
+                    \draw[<-] (pile.Ld) -| +(-0.5, -1.25) -- +(-12, -1.25) node[anchor=east] {Ld\_Corr};
+                    \draw[<-, double] (16, 5) |- (0, 15) node[anchor=east] (err) {Err};
+                    \draw[<-] (orsel.input 1) -- +(0, 0.75);
+                    \draw[<-] (orsel.input 2) -- +(0, 0.75);
+                    \draw[<-] (muxcmp1.west) |- +(-2, 0.5) -- +(-2, 6.3);
+                    \draw[<-, double] (cmp1.west) -| +(-0.65, -1) -- +(-5.65, -1)  node[anchor=east] {P1};
+                    \draw[<-, double] (cmp2.west) -| +(-0.65, 1) -- +(-5.65, 1)  node[anchor=east] {P2};
+
+                    \draw[->] (srr.Dout) -- +(5, 0) |- (muxcorr.south west);
+                    \draw[->] (srr.Dout) -- +(0.5, 0) |- (not.input);
+                    \draw[->] (not.output) -- +(3.55, 0) |- (muxcorr.south east);
+                    \draw[->] (muxcorr.north) -- +(1, 0) |- (pile.In);
+
+                    \draw[->] (muxcmp1.north) -| (orcorr.input 2);
+                    \draw[->] (muxcmp2.north) -| (orcorr.input 1);
+                    \draw[->] (orcorr.output) -- (muxcorr.west);
+
+                    \draw[<-] (muxcmp1.south west) -- +(-1, 0) node[anchor=east] {0};
+                    \draw[->] (cmp1.east) -- +(2, 0) |- (muxcmp1.south east);
+
+                    \draw[<-] (muxcmp2.south east) -- +(-1, 0) node[anchor=east] {0};
+                    \draw[->] (cmp2.east) -- +(2, 0) |- (muxcmp2.south west);
+
+                    \draw[->] (orsel.output) -- (muxcmp2.west);
+                    \draw[->, double] (counter.Q) -| (cmp2.south);
+                    \draw[->, double] (counter.Q) -| (cmp1.north);
+
+                    \draw[->, double] (14, 5) -- +(6, 0) node[anchor=west] {D\_corr\_out};
+
+                    \draw[->, double] (pile.Dout) -| +(4, 3);
+
+                    \draw[->, double] (17, 6) node[anchor=south] {0} -- +(0, -1);
+                    \draw[->, double] (15, 6) node[anchor=south] {0} -- +(0, -1);
+
+                    \node at (1, 15)[anchor=south west] {2};
+                    \node at (1, 13)[anchor=south west] {5};
+                    \node at (1, 7)[anchor=south west] {5};
+                    \node at (1, 3.75)[anchor=south west] {32};
+                    \node at (4, 11)[anchor=south west] {5};
+                    \node at (9, 15)[anchor=north west] {[1]};
+                    \node at (9, 15)[anchor=north east] {[0]};
+                    \node at (7, 15)[anchor=north west] {[1]};
+                    \node at (14, 2)[anchor=south west] {32};
+
+                    \node at (15, 5)[anchor=south west] {\rotatebox{90}{6 $[31:26]$}};
+                    \node at (16, 5)[anchor=south west] {\rotatebox{90}{2 $[25:24]$}};
+                    \node at (17, 5)[anchor=south west] {\rotatebox{90}{3 $[23:21]$}};
+                    \node at (18, 5)[anchor=north west] {\rotatebox{-90}{21 $[20:0]$}};
+
+                    \draw[dashed] (1, 0) -- (19, 0) -- (19, 16) -- (1, 16) -- (1,0);
+
+
+                \end{tikzpicture}
+                \caption{Unité de traitement du correcteur}
+                \label{fig:me_syndrome}
+            \end{figure}
+            \subsection{Unité de contrôle}
+            \subsection{Définition des connexions entre l'UC et l'UT}
 
     \begin{thebibliography}{99}
         %\bibitem{openlayers} Openlayers, \url{http://openlayers.org/}
