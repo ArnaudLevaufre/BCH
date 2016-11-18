@@ -13,4 +13,11 @@
 #define IORD_BCH_DATA(base) IORD(base, BCH_DATA)
 #define IOWR_BCH_DATA(base, data) IOWR(base, BCH_DATA, data)
 
+#define BCH_MASK_STATUS_IRQ 1 << 0
+#define BCH_MASK_STATUS_EMPTY 1 << 1
+#define BCH_MASK_STATUS_FULL 1 <<2
+
+#define BCH_MASK_CTRL_DECODE 1 << 0
+#define BCH_MASK_CTRL_IRQ_ENABLE 1 << 1
+
 #endif /* __BCH_REGS_H__ */
