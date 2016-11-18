@@ -21,6 +21,8 @@
 #include <stdbool.h>
 #include "BCHAPI.h"
 #include "system.h"
+#include "sys/alt_irq.h"
+
 
 void BCH_ISR(void*);
 
@@ -34,11 +36,23 @@ int main()
   volatile unsigned int status = BCH_read_status(BCH_0_BASE);
   printf("Status: 0x%x\n", status);
 
-  BCH_push_msg(BCH_0_BASE, 0x638E0E56);
+  // 0 Error
+  BCH_push_msg(BCH_0_BASE, 0x435A0BD5);
   status = BCH_read_status(BCH_0_BASE);
   printf("Status: 0x%x\n", status);
 
-  BCH_push_msg(BCH_0_BASE, 0x638E0E57);
+  // 1 Error
+  BCH_push_msg(BCH_0_BASE, 0x435A0BD4);
+  status = BCH_read_status(BCH_0_BASE);
+  printf("Status: 0x%x\n", status);
+
+  // 2 Error
+  BCH_push_msg(BCH_0_BASE, 0x435A0AD4);
+  status = BCH_read_status(BCH_0_BASE);
+  printf("Status: 0x%x\n", status);
+
+  // 3 Error
+  BCH_push_msg(BCH_0_BASE, 0x435A1AD4);
   status = BCH_read_status(BCH_0_BASE);
   printf("Status: 0x%x\n", status);
 
@@ -55,10 +69,18 @@ void BCH_ISR(void* context){
 	BCH_pop_msg(BCH_0_BASE, &data);
 	unsigned int status = BCH_read_status(BCH_0_BASE);
 	unsigned int ctrl = BCH_read_ctrl(BCH_0_BASE);
-	printf("Data: 0x%x; Status: 0x%x; Ctrl: 0x%x\n", data.msg, status, ctrl);
+	printf("Error: 0x%X, Data: 0x%X; Status: 0x%X; Ctrl: 0x%X\n", data.error, data.msg, status, ctrl);
 	BCH_pop_msg(BCH_0_BASE, &data);
 	status = BCH_read_status(BCH_0_BASE);
 	ctrl = BCH_read_ctrl(BCH_0_BASE);
-	printf("Data: 0x%x; Status: 0x%x; Ctrl: 0x%x\n", data.msg, status, ctrl);
+	printf("Error: 0x%X, Data: 0x%X; Status: 0x%X; Ctrl: 0x%X\n", data.error, data.msg, status, ctrl);
+	BCH_pop_msg(BCH_0_BASE, &data);
+	status = BCH_read_status(BCH_0_BASE);
+	ctrl = BCH_read_ctrl(BCH_0_BASE);
+	printf("Error: 0x%X, Data: 0x%X; Status: 0x%X; Ctrl: 0x%X\n", data.error, data.msg, status, ctrl);
+	BCH_pop_msg(BCH_0_BASE, &data);
+	status = BCH_read_status(BCH_0_BASE);
+	ctrl = BCH_read_ctrl(BCH_0_BASE);
+	printf("Error: 0x%X, Data: 0x%X; Status: 0x%X; Ctrl: 0x%X\n", data.error, data.msg, status, ctrl);
 }
 

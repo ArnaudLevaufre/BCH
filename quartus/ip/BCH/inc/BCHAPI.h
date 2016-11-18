@@ -1,5 +1,12 @@
 #include "BCH_regs.h"
 
+#define BCH_MASK_STATUS_IRQ 1 << 0
+#define BCH_MASK_STATUS_EMPTY 1 << 1
+#define BCH_MASK_STATUS_FULL 1 <<2
+
+#define BCH_MASK_CTRL_DECODE 1 << 0
+#define BCH_MASK_CTRL_IRQ_ENABLED 1 << 1
+
 
 typedef struct {
     char error;
