@@ -18,6 +18,6 @@
 #define BCH_MASK_STATUS_FULL 1 <<2
 
 #define BCH_MASK_CTRL_DECODE 1 << 0
-#define BCH_MASK_CTRL_IRQ_ENABLE 1 << 1
+#define BCH_MASK_CTRL_IRQ_ENABLED 1 << 1
 
 #endif /* __BCH_REGS_H__ */
