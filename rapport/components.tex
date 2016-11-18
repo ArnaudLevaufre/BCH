@@ -21,6 +21,8 @@
 \tikzset{every uccorr node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 \tikzset{every utcorr node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 \tikzset{every avalon node/.style={draw,minimum width=5cm,minimum height=5cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
+\tikzset{every decaddr node/.style={draw,minimum width=4cm,minimum height=2cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
+\tikzset{every fifo node/.style={draw,minimum width=4cm,minimum height=2cm,inner sep=1mm,outer sep=0pt,cap=round,add font=\sffamily}}
 
 
 %
@@ -1701,6 +1703,11 @@
         \pgf@x=-1\pgf@x%
         \pgf@y=-0.1071\pgf@y%
     }
+    \anchor{Irqn}{ % out
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=-0.3214\pgf@y%
+    }
 
     \anchor{Reset}{ % in
         \pgf@process{\northeast}%
@@ -1743,10 +1750,6 @@
         \pgf@process{\northeast}%
         \pgf@y=-0.5357\pgf@y%
     }
-    \anchor{Irqn}{ % out
-        \pgf@process{\northeast}%
-        \pgf@y=-0.75\pgf@y%
-    }
 
     % Draw the rectangle box and the port labels
     \backgroundpath{
@@ -1786,6 +1789,9 @@
         \pgf@anchor@avalon@Dout
         \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{D\_out}}
 
+        \pgf@anchor@avalon@Irqn
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{Irq\_n}}
+
         \pgf@anchor@avalon@Reset
         \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{Reset}}
 
@@ -1807,14 +1813,236 @@
         \pgf@anchor@avalon@Decode
         \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Decode}}
 
-        \pgf@anchor@avalon@Irqn
-        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Irq\_n}}
-
         \pgf@anchor@avalon@Words
         \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Words}}
 
         \pgf@anchor@avalon@FifoOut
         \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{FifoOut}}
+
+        \endgroup
+    }
+}
+
+
+%
+% Dec addr
+%
+
+\pgfdeclareshape{decaddr}{
+  % The 'minimum width' and 'minimum height' keys, not the content, determine
+  % the size
+    \savedanchor\northeast{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=0.5\pgf@x
+        \pgf@y=0.5\pgf@y
+    }
+  % This is redundant, but makes some things easier:
+    \savedanchor\southwest{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=-0.5\pgf@x
+        \pgf@y=-0.5\pgf@y
+    }
+    % Inherit from rectangle
+    \inheritanchorborder[from=rectangle]
+
+    % Define same anchor a normal rectangle has
+    \anchor{center}{\pgfpointorigin}
+    \anchor{north}{\northeast \pgf@x=0pt}
+    \anchor{east}{\northeast \pgf@y=0pt}
+    \anchor{south}{\southwest \pgf@x=0pt}
+    \anchor{west}{\southwest \pgf@y=0pt}
+    \anchor{north east}{\northeast}
+    \anchor{north west}{\northeast \pgf@x=-\pgf@x}
+    \anchor{south west}{\southwest}
+    \anchor{south east}{\southwest \pgf@x=-\pgf@x}
+    \anchor{text}{
+        \pgfpointorigin
+        \advance\pgf@x by -.5\wd\pgfnodeparttextbox%
+        \advance\pgf@y by -.5\ht\pgfnodeparttextbox%
+        \advance\pgf@y by +.5\dp\pgfnodeparttextbox%
+    }
+
+    \anchor{Addr}{ % in
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0\pgf@y%
+    }
+
+    \anchor{Status}{ % in
+        \pgf@process{\northeast}%
+        \pgf@y=0.5\pgf@y%
+    }
+    \anchor{Control}{ % in
+        \pgf@process{\northeast}%
+        \pgf@y=0\pgf@y%
+    }
+    \anchor{Data}{ % in
+        \pgf@process{\northeast}%
+        \pgf@y=-0.5\pgf@y%
+    }
+
+    % Draw the rectangle box and the port labels
+    \backgroundpath{
+        % Rectangle box
+        \pgfpathrectanglecorners{\southwest}{\northeast}
+
+        % Draw port labels
+        \begingroup
+        \tikzset{port labels} % Use font from this style
+        \tikz@textfont
+
+        \pgf@anchor@decaddr@Addr
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Addr}}
+
+
+        \pgf@anchor@decaddr@Status
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Status}}
+
+        \pgf@anchor@decaddr@Control
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Control}}
+
+        \pgf@anchor@decaddr@Data
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Data}}
+
+        \endgroup
+    }
+}
+
+%
+% Fifo
+%
+
+\pgfdeclareshape{fifo}{
+  % The 'minimum width' and 'minimum height' keys, not the content, determine
+  % the size
+    \savedanchor\northeast{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=0.5\pgf@x
+        \pgf@y=0.5\pgf@y
+    }
+  % This is redundant, but makes some things easier:
+    \savedanchor\southwest{%
+        \pgfmathsetlength\pgf@x{\pgfshapeminwidth}%
+        \pgfmathsetlength\pgf@y{\pgfshapeminheight}%
+        \pgf@x=-0.5\pgf@x
+        \pgf@y=-0.5\pgf@y
+    }
+    % Inherit from rectangle
+    \inheritanchorborder[from=rectangle]
+
+    % Define same anchor a normal rectangle has
+    \anchor{center}{\pgfpointorigin}
+    \anchor{north}{\northeast \pgf@x=0pt}
+    \anchor{east}{\northeast \pgf@y=0pt}
+    \anchor{south}{\southwest \pgf@x=0pt}
+    \anchor{west}{\southwest \pgf@y=0pt}
+    \anchor{north east}{\northeast}
+    \anchor{north west}{\northeast \pgf@x=-\pgf@x}
+    \anchor{south west}{\southwest}
+    \anchor{south east}{\southwest \pgf@x=-\pgf@x}
+    \anchor{text}{
+        \pgfpointorigin
+        \advance\pgf@x by -.5\wd\pgfnodeparttextbox%
+        \advance\pgf@y by -.5\ht\pgfnodeparttextbox%
+        \advance\pgf@y by +.5\dp\pgfnodeparttextbox%
+    }
+
+    \anchor{Din}{ % in
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0.75\pgf@y%
+    }
+    \anchor{Init}{ % in
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0.375\pgf@y%
+    }
+    \anchor{W}{ % in
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=0\pgf@y%
+    }
+    \anchor{R}{ % in
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=-0.375\pgf@y%
+    }
+    \anchor{CLK}{ % in
+        \pgf@process{\northeast}%
+        \pgf@x=-1\pgf@x%
+        \pgf@y=-0.75\pgf@y%
+    }
+
+    \anchor{Dout}{ % in
+        \pgf@process{\northeast}%
+        \pgf@y=0.75\pgf@y%
+    }
+    \anchor{Level}{ % in
+        \pgf@process{\northeast}%
+        \pgf@y=0.25\pgf@y%
+    }
+    \anchor{Full}{ % in
+        \pgf@process{\northeast}%
+        \pgf@y=-0.25\pgf@y%
+    }
+    \anchor{Empty}{ % in
+        \pgf@process{\northeast}%
+        \pgf@y=-0.75\pgf@y%
+    }
+
+    % Draw the rectangle box and the port labels
+    \backgroundpath{
+        % Rectangle box
+        \pgfpathrectanglecorners{\southwest}{\northeast}
+        % Angle (>) for clock input
+        \pgf@anchor@fifo@CLK
+        \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+        \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+        \pgf@xc=\pgf@x \pgf@yc=\pgf@y
+        \pgfmathsetlength\pgf@x{0.5ex} % size depends on font size
+        \advance\pgf@ya by \pgf@x
+        \advance\pgf@xb by \pgf@x
+        \advance\pgf@yc by -\pgf@x
+        \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+        \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+        \pgfclosepath
+
+        % Draw port labels
+        \begingroup
+        \tikzset{port labels} % Use font from this style
+        \tikz@textfont
+
+        \pgf@anchor@fifo@Din
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Din}}
+
+        \pgf@anchor@fifo@Init
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{Init}}
+
+        \pgf@anchor@fifo@W
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{W}}
+
+        \pgf@anchor@fifo@R
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-0.75ex}{R}}
+
+        \pgf@anchor@fifo@CLK
+        \pgftext[left,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=\pgfshapeinnerxsep]{\raisebox{-.75ex}{CLK}}
+
+
+        \pgf@anchor@fifo@Dout
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Dout}}
+
+        \pgf@anchor@fifo@Level
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Level}}
+
+        \pgf@anchor@fifo@Full
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Full}}
+
+        \pgf@anchor@fifo@Empty
+        \pgftext[right,base,at={\pgfpoint{\pgf@x}{\pgf@y}},x=-\pgfshapeinnerxsep]{\raisebox{-.75ex}{Empty}}
 
         \endgroup
     }

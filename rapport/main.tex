@@ -644,7 +644,7 @@
             \end{figure}
 
         \section{Interface Avalon}
-            \subsection{Vue étérieure}
+            \subsection{Vue extérieure}
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, scale=1, every node/.style={scale=1}, circuit logic US]
@@ -656,6 +656,7 @@
                     \draw[<-] (avalon.W) -- +(-2, 0) node[anchor=east] {W};
                     \draw[<-] (avalon.Din) -- +(-2, 0) node[anchor=east] {D\_in};
                     \draw[->] (avalon.Dout) -- +(-2, 0) node[anchor=east] {D\_out};
+                    \draw[->] (avalon.Irqn) -- +(-2, 0) node[anchor=east] {Irq\_n};
                     \draw[<-] (avalon.Reset) -- +(-2, 0) node[anchor=east] {Reset};
 
                     \draw[<-] (avalon.AskIrq) -- +(2, 0) node[anchor=west] {Ask\_irq};
@@ -665,13 +666,127 @@
                     \draw[->] (avalon.FifoOut) -- +(2, 0) node[anchor=west] {FifoOut};
                     \draw[->] (avalon.Words) -- +(2, 0) node[anchor=west] {Words};
                     \draw[->] (avalon.Decode) -- +(2, 0) node[anchor=west] {Decode};
-                    \draw[->] (avalon.Irqn) -- +(2, 0) node[anchor=west] {Irq\_n};
 
                 \end{tikzpicture}
                 \caption{Définition des connexions entre l'UC et l'UT du correcteur}
                 \label{fig:me_syndrome}
             \end{figure}
 
+            \subsection{schéma fonctionnel}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth, scale=0.5, every node/.style={scale=0.5}, circuit logic US]
+                    \tikzstyle{connectionpoint} = [circle, draw, fill=black, scale=0.5];
+                    %\draw[help lines] (0, 0) grid (30,40);
+
+                    % Major busses
+
+                    \foreach [count=\ni] \txt in {Addr, R, W, Din, Dout, Irq\_n}{
+                        \draw[-] (-0.5 + 0.5*\ni, 0) -- (-0.5 + 0.5*\ni, 40) node[anchor=base] {\rotatebox{90}{\txt}};
+                    }
+
+                    \foreach [count=\ni] \txt in {Decod, Words, FifoOut, CorrOutLd, CorrOut, InitFifo, Ask\_irq}{
+                        \draw[-] (30.5 - 0.5*\ni, 0) -- (30.5 - 0.5*\ni, 40) node[anchor=base] {\rotatebox{90}{\txt}};
+                    }
+
+                    \foreach [count=\ni] \txt in {Status, Control, Data}{
+                        \draw[-] (9.5 + 0.5*\ni, 0) -- (9.5 + 0.5*\ni, 40) node[anchor=base] {\rotatebox{90}{\txt}};
+                    }
+
+                    \node[shape=decaddr] at (7, 37) (decaddr) {Dec Addr};
+                    \draw[-] (decaddr.Addr) -- +(-5, 0) node[connectionpoint] {};
+                    \draw[-] (decaddr.Status) -- +(1, 0) node[connectionpoint] {};
+                    \draw[-] (decaddr.Control) -- +(1.5, 0) node[connectionpoint] {};
+                    \draw[-] (decaddr.Data) -- +(2, 0) node[connectionpoint] {};
+
+                    \node[shape=fifo] at (16, 30) (fifo) {Fifo};
+                    \draw[-] (fifo.Dout) -- +(11, 0) node[connectionpoint] {};
+                    \draw (fifo.Init) -| +(-0.5, 1) -- +(13.5, 1) node[connectionpoint] {};
+
+                    \node[trapezium, draw, rotate=-180, scale=3] at (13, 33) (muxfifo) {};
+                    \draw (muxfifo.south west) -- +(0,0) node[anchor=north] {1};
+                    \draw (muxfifo.south east) -- +(0,0) node[anchor=north] {0};
+                    \draw (muxfifo.north) |- (fifo.Din);
+                    \draw (muxfifo.south east) |- +(-11.1, 1) node[connectionpoint] {};
+                    \draw (muxfifo.south west) |- +(14.6, 1) node[connectionpoint] {};
+                    \draw (muxfifo.west) -- +(14.9, 0) node[connectionpoint] {};
+
+                    \node[or gate, rotate=90] at (12, 28) (orfifow) {};
+                    \node[or gate, rotate=90] at (13, 27) (orfifor) {};
+                    \draw (fifo.W) -| (orfifow.output);
+                    \draw (fifo.R) -| (orfifor.output);
+
+                    \node[and gate] at (11.5, 26) (andfifow) {};
+                    \node[and gate] at (12.5, 25) (andfifor) {};
+
+                    \draw (orfifow.input 1) |- (andfifow.output);
+                    \draw (orfifow.input 2) |- +(16.45, -0.25) node[connectionpoint] {};
+                    \draw (orfifor.input 1) |- (andfifor.output);
+                    \draw (orfifor.input 2) |- +(15.45, -0.25) node[connectionpoint] {};
+                    \draw (andfifow.input 1) -- +(-0.27, 0) node[connectionpoint] {};
+                    \draw (andfifow.input 2) -- +(-10.27, 0) node[connectionpoint] {};
+                    \draw (andfifor.input 1) -- +(-1.37, 0) node[connectionpoint] {};
+                    \draw (andfifor.input 2) -- +(-11.8, 0) node[connectionpoint] {};
+
+                    \node[shape=dff] at(15, 22) (irqen) {IrqEn};
+                    \node[and gate] at(14, 21) (andirqen) {};
+                    \draw (andirqen) -| (irqen.S);
+                    \draw (andirqen.input 1) -- +(-12.75, 0) node [connectionpoint] {};
+                    \draw (andirqen.input 2) -- +(-3.35, 0) node [connectionpoint] {};
+                    \draw (irqen.D) -- +(-13, 0) node [connectionpoint] {};
+                    \draw (irqen.D) -- +(0,0) node[anchor=south east] {$[1]$};
+
+                    \node[shape=dff] at(15, 19) (irq) {Irq};
+                    \node[and gate] at (14, 20) (andirq) {};
+                    \draw (andirq.output) -| (irq.R);
+                    \draw (andirq.input 1) -- +(-13.3, 0) node [connectionpoint] {};
+                    \draw (andirq.input 2) -- +(-3.85, 0) node [connectionpoint] {};
+                    \draw (irq.D) -- +(-1, 0) node[anchor=east] {1};
+                    \draw (irq.S) |- +(12, -0.25) node[connectionpoint] {};
+
+                    \node [or gate, rotate=90] at (16, 23.5) (andirqn) {};
+                    \draw (andirqn.input 1) |- (irqen.Qn);
+                    \draw (andirqn.input 2) |- (irq.Qn);
+                    \draw (andirqn.output) |- +(-13.5, 0.25) node [connectionpoint] {};
+
+                    \node [shape=dff] at (15, 8) (decode) {Dec};
+                    \draw (decode.Q) -- +(14.5, 0) node [connectionpoint] {};
+                    \draw (decode.D) -- +(-13, 0) node [connectionpoint] {};
+                    \draw (decode.D) -- +(0, 0) node [anchor=south east] {$[0]$};
+                    \draw (decode.R) |- +(12, 0.25) node [connectionpoint] {};
+                    \node [and gate, rotate=90] at (15, 6.5) (anddecode) {};
+                    \draw (anddecode.output) -- (decode.S);
+                    \draw (anddecode.input 1) |- +(-13.95, -0.25) node [connectionpoint] {};
+                    \draw (anddecode.input 2) |- +(-4.55, -0.5) node [connectionpoint] {};
+
+                    \node [shape=counter] at (15, 3) (words) {Words};
+                    \draw (words.Q) -- +(13.5, 0) node [connectionpoint] {};
+                    \draw (words.Raz) -| +(-0.5, -1.75) -- +(12.95, -1.75) node [connectionpoint] {};
+                    \draw (words.Inc) -- +(-1, 0) node [and gate, anchor=output] (andwords) {};
+                    \draw (andwords.input 1) -- +(-1.6, 0) node [connectionpoint] {};
+                    \draw (andwords.input 2) -- +(-11.6, 0) node [connectionpoint] {};
+
+                    \node [trapezium,draw,rotate=90,scale=4] at(15, 12) (muxdout) {};
+                    \draw (muxdout.south west) -- +(0,0) node [anchor=east] {1X};
+                    \draw (muxdout.south) -- +(0,0) node [anchor=east] {01};
+                    \draw (muxdout.south east) -- +(0,0) node [anchor=east] {00};
+                    \draw (muxdout.north) -- +(-12.5, 0) node [connectionpoint] {};
+                    \draw (muxdout.east) |- +(-15, 0.25) node [connectionpoint] {};
+                    \draw (muxdout.south west) -- +(13.5, 0) node [connectionpoint] {};
+                    \draw (muxdout.south east) -| +(1.5, 4);
+                    \draw (muxdout.south) -| +(5.5, 4.5);
+                    \draw[->] (irq.Qn) -- +(3, 0) |- +(1.5, -2.6);
+                    \draw[->] (fifo.Empty) -- +(0.75, 0) |- +(-1, -14.25);
+                    \draw[->] (fifo.Full) -- +(1, 0) |- +(-1, -15.75);
+                    \draw[<-] (17, 13) -- +(1, 0) node [anchor=west] {0};
+                    \draw[<-] (21, 16) -- +(9, 0) node [connectionpoint] {};
+                    \draw[->] (irqen.Q) -- +(6.5, 0) |- +(5.5, -8);
+                    \draw[<-] (21, 13) -- +(1, 0) node[anchor=west] {0};
+
+                \end{tikzpicture}
+                \caption{Circuit logique du wrapper avalon}
+                \label{fig:me_syndrome}
+            \end{figure}
 
     \begin{thebibliography}{99}
         %\bibitem{openlayers} Openlayers, \url{http://openlayers.org/}
