@@ -8,7 +8,7 @@ void BCH_push_msg(unsigned long base, unsigned int msg) {
 void BCH_pop_msg(unsigned long base, bch_msg* msg){
 	volatile unsigned data = IORD_BCH_DATA(base);
 	msg->error = data >> 24;
-	msg->msg = data & 0x8FFFFF;
+	msg->msg = data & 0xFFFFFF;
 }
 
 
