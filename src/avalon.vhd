@@ -67,9 +67,7 @@ begin
             if ask_irq = '1' then
                 in_decode <= '0';
                 in_words <= "00";
-                if in_irqEn = '1' then
-                    in_irq <= '0';
-                end if;
+                in_irq <= '0';
             end if;
         end if;
     end process;
@@ -80,7 +78,7 @@ begin
     decode <= in_decode;
     FifoIn <= corr_out when corr_out_ld = '1' else D_in;
     FifoOut <= in_FifoOut;
-    irq_n <= in_irq;
+    irq_n <= in_irq when in_irqEn = '1' else '1';
     D_out <= (0 => in_irq, 1 => in_empty, 2 => in_full, others => '0') when r = '1' and unsigned(addr) = 0 else
              (0 => in_decode, 1 => in_irqEn, others => '0') when r = '1' and unsigned(addr) = 1 else
               in_FifoOut when unsigned(addr) = 2 and r = '1' else (others => '0');
