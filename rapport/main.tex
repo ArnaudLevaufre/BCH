@@ -643,6 +643,36 @@
                 \label{fig:me_syndrome}
             \end{figure}
 
+        \section{Interface Avalon}
+            \subsection{Vue étérieure}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth, scale=1, every node/.style={scale=1}, circuit logic US]
+
+                    \node[shape=avalon] at (5, 5) (avalon) {Avalon};
+
+                    \draw[<-] (avalon.Addr) -- +(-2, 0) node[anchor=east] {Addr};
+                    \draw[<-] (avalon.R) -- +(-2, 0) node[anchor=east] {R};
+                    \draw[<-] (avalon.W) -- +(-2, 0) node[anchor=east] {W};
+                    \draw[<-] (avalon.Din) -- +(-2, 0) node[anchor=east] {D\_in};
+                    \draw[->] (avalon.Dout) -- +(-2, 0) node[anchor=east] {D\_out};
+                    \draw[<-] (avalon.Reset) -- +(-2, 0) node[anchor=east] {Reset};
+
+                    \draw[<-] (avalon.AskIrq) -- +(2, 0) node[anchor=west] {Ask\_irq};
+                    \draw[<-] (avalon.InitFifo) -- +(2, 0) node[anchor=west] {InitFifo};
+                    \draw[<-] (avalon.CorrOut) -- +(2, 0) node[anchor=west] {CorrOut};
+                    \draw[<-] (avalon.CorrOutLd) -- +(2, 0) node[anchor=west] {Corr\_out\_ld};
+                    \draw[->] (avalon.FifoOut) -- +(2, 0) node[anchor=west] {FifoOut};
+                    \draw[->] (avalon.Words) -- +(2, 0) node[anchor=west] {Words};
+                    \draw[->] (avalon.Decode) -- +(2, 0) node[anchor=west] {Decode};
+                    \draw[->] (avalon.Irqn) -- +(2, 0) node[anchor=west] {Irq\_n};
+
+                \end{tikzpicture}
+                \caption{Définition des connexions entre l'UC et l'UT du correcteur}
+                \label{fig:me_syndrome}
+            \end{figure}
+
+
     \begin{thebibliography}{99}
         %\bibitem{openlayers} Openlayers, \url{http://openlayers.org/}
     \end{thebibliography}
