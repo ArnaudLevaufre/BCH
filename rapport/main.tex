@@ -587,6 +587,7 @@
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, scale=0.6, every node/.style={scale=0.6}, circuit logic US]
+                    \tikzstyle{connectionpoint} = [circle, draw, fill=black, scale=0.5];
                     %\draw[help lines] (0, 0) grid (20,20);
 
                     \node[shape=srr] at (3, 3) (srr) {};
@@ -645,7 +646,7 @@
                     \draw[->] (orsel.output) -- (muxcmp2.west);
                     \draw[->, double] (counter.Q) -| (cmp2.south);
                     \draw[->, double] (counter.Q) -| (cmp1.north);
-                    \draw[->, double] (counter.Q) -- +(16, 0) node[anchor=west] {Count};
+                    \draw[->, double] (counter.Q) -- +(2, 0) node [connectionpoint] {} -- +(16, 0) node[anchor=west] {Count};
 
                     \draw[<-] (counter.Inc) -- +(-0.5, 0) node[anchor=east] {1};
 
@@ -760,7 +761,7 @@
                     \draw[->] (avalon.Decode) -- +(2, 0) node[anchor=west] {Decode};
 
                 \end{tikzpicture}
-                \caption{Définition des connexions entre l'UC et l'UT du correcteur}
+                \caption{Vue extérieur du block avalon}
                 \label{fig:me_syndrome}
             \end{figure}
 
