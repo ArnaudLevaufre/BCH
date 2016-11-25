@@ -592,6 +592,18 @@
 
         \section{Correcteur}
             \subsection{Unité de traitement}
+            Le correcteur est basé sur un registre à décalage laissant passer
+            un à un les 21 bits d'information du message. Ceux-ci seront
+            corrigés, c'est à dire inversés, si leur position correspond avec
+            les valeurs P1 ou P2, à condition que des erreurs soient
+            effectivement présentes. La position du bit en cours de décalage
+            est donnée par un registre de comptage, qui permet également à
+            l'unité de contrôle de réaliser précisément 21 décalages. Le format
+            de sortie désiré est par la suite créé et le nouveau message ainsi
+            constitué sera maintenu jusqu'à ce qu'un autre cycle de la Look Up
+            Table soit complété. Le schéma logique présentant ce foncitonnent
+            est donné dans la figure~\ref{fig:ut_corr}
+
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, scale=0.6, every node/.style={scale=0.6}, circuit logic US]
@@ -685,7 +697,7 @@
 
                 \end{tikzpicture}
                 \caption{Unité de traitement du correcteur}
-                \label{fig:me_syndrome}
+                \label{fig:ut_corr}
             \end{figure}
 
             \subsection{Unité de contrôle}
