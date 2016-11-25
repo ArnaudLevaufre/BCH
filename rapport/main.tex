@@ -46,6 +46,90 @@
 
     \chapter{Étude du circuit}
         \section{Architecture globale}
+        La vue extérieur du décodeur BCH est imposé par le sujet et est
+        présentée dans le figure~\ref{fig:bch} ci-dessous. Sa structure
+        interne est présentée dans la subsection~\ref{sec:fonc_bch}. On
+        retrouve les entrées et sorties nécéssaire pour définir une
+        interface Avalon fonctionnelle.
+
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth,scale=1, every node/.style={scale=1}, circuit logic US]
+                    \tikzstyle{every initial by arrow} = [initial text=reset, text=red, -, draw=red, decorate, decoration=zigzag]
+                    \node[shape=bch] (bch) {BCH};
+
+                    \draw[<-, double] (bch.Din) -- +(-1, 0) node[anchor=east] {Din};
+                    \draw[<-] (bch.Wr) -- +(-1, 0) node[anchor=east] {Wr};
+                    \draw[<-] (bch.Rd) -- +(-1, 0) node[anchor=east] {Rd};
+                    \draw[<-] (bch.Addr) -- +(-1, 0) node[anchor=east] {Addr};
+                    \draw[<-] (bch.Resetn) -- +(-1, 0) node[anchor=east] {Reset\_n};
+                    \draw[->, double] (bch.Dout) -- +(1, 0) node[anchor=west] {Dout};
+                    \draw[->] (bch.Irqn) -- +(1, 0) node[anchor=west] {Irq\_n};
+
+                \end{tikzpicture}
+                \caption{Vue éxtérieur du block BCH}
+                \label{fig:bch}
+            \end{figure}
+
+            \subsection{Sous ensembldes fonctionnels du block BCH}
+            \label{sec:fonc_bch}
+            La réalisation du décodeur BCH se base sur cinq blocks
+            présentés dans les subsection suivantes.
+            \begin{itemize}
+                \item Le calcul du syndrome.
+                \item La look up table.
+                \item Le correcteur d'erreur.
+                \item L'interface avalon.
+                \item La machine a état maitre.
+            \end{itemize}
+            A l'eception de l'interface avaalon et de la machine a état, les
+            blocks sont relativement indépendants et peuvent être utilisé
+            chacun séparément. Cela facilite, d'une part, le développement et
+            le test et, d'autre part, la réutilisation du code développé. Un
+            codeur BCH pourrait par exemple réutiliser le block de calcul du
+            syndrome. La figure~\ref{fig:bch_blocks}
+
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm, scale=0.75, every node/.style={scale=0.75}]
+                    \tikzstyle{every initial by arrow} = [initial text=reset, text=red, -, draw=red, decorate, decoration=zigzag]
+                    %\draw[help lines] (0, 0) grid (20,20);
+
+                    \node[shape=avalon] at (0, 0) (avalon) {Avalon};
+                    \node[shape=memaster] at (7.25, 10) (memaster) {ME\_Master};
+                    \node[shape=syndrome] at (15, 15) (syndrome) {Syndrome};
+                    \node[shape=lut] at (15, 10) (lut) {Lut};
+                    \node[shape=corr] at (15, 5) (corr) {Correcteur};
+                    \node[shape=dff] at (8, 5) (dff) {Err};
+
+                    \draw[->] (memaster.StartSyndrome) -- +(0.25, 0) |- (syndrome.Start);
+                    \draw[->] (memaster.StartLut) -- +(0.25, 0) |- (lut.Start);
+                    \draw[->] (memaster.StartCorr) -- +(1.25, 0) |- (corr.Start);
+                    \draw[->] (corr.End) -- +(1.5, 0) -- +(1.5, 13) -- +(-15, 13) |- (memaster.EndCorr);
+                    \draw[->] (lut.End) -- +(1.25, 0) -- +(1.25, 7.25) -- +(-14.75, 7.25) |- (memaster.EndLut);
+                    \draw[->] (syndrome.End) -- +(1, 0) -- +(1, 3.75) -- +(-14.5, 3.75) |- (memaster.EndSyndrome);
+                    \draw[->, double] (syndrome.Syndrome) -- +(0.75, 0) -- +(0.75, 2) -- +(-14.25, 2) |- (memaster.Syndrome);
+                    \draw[->, double] (syndrome.Syndrome) -- +(0.75, 0) -- +(0.75, -3) -- +(-5.5, -3) |- (lut.Syndrome);
+                    \draw[->, double] (lut.Err) -- +(0.5, 0) |- +(-11, -1.75) |- (dff.D);
+                    \draw[->, double] (dff.Q) -- +(1,0) |- (corr.Err);
+                    \draw[->] (lut.LdErr) -- +(0.25, 0) |- +(-11.5, -0.75) -- +(-11.5, -5.5) -| (dff.S);
+                    \draw[->] (memaster.RazErr) -| +(0.25, -0.5) -| (dff.R);
+                    \draw[->] (lut.Pone) -| +(1, -3.75) -- +(-5.5, -3.75) |- (corr.Pone);
+                    \draw[->] (lut.Ptwo) -| +(0.75, -2.75) -- +(-5.75, -2.75) |- (corr.Ptwo);
+
+                    \draw[->] (memaster.AskIrq) -- +(0.5, 0) |- (avalon.AskIrq);
+                    \draw[->, double] (corr.Dout) -- +(1, 0) |- (avalon.CorrOut);
+                    \draw[->] (corr.End) -- +(1.5, 0) |- (avalon.CorrOutLd);
+
+                    \draw[->, double] (avalon.FifoOut) -- +(9, 0) |- (corr.Din);
+                    \draw[->, double] (avalon.FifoOut) -| +(1, 4) -| +(-2, 4) |- (syndrome.Data);
+                    \draw[->, double] (avalon.Words) -| +(1.5, 5.25) -| +(-1.5, 5.25) |- (memaster.Words);
+                    \draw[->] (avalon.Decode) -| +(2, 6.5) -| +(-1, 6.5) |- (memaster.Decode);
+
+                \end{tikzpicture}
+                \caption{Vue éxtérieur du block BCH}
+                \label{fig:bch_blocks}
+            \end{figure}
 
             \subsection{Machine à état principale}
             \begin{figure}[H]
@@ -363,7 +447,7 @@
                     \node[shape=counter] at (5,11) (p1counter) {P1};
                     \node[shape=counter] at (5,5) (p2counter) {P2 + 1};
 
-                    \node[shape=lut] at (9, 8) (lut) {LUT};
+                    \node[shape=lutcomponent] at (9, 8) (lut) {LUT};
 
                     \node[shape=dff] at (12, 14) (syn) {};
 
@@ -631,6 +715,7 @@
                     \draw[->](uccorr.End) -- +(2, 0) node[anchor=west] {End\_corr};
 
                     \draw[<-,double](utcorr.Data) -- +(-2, 0) node[anchor=east] {FifoOut};
+                    \draw[<-,double](utcorr.Err) -- +(-2, 0) node[anchor=east] {Err};
                     \draw[<-](utcorr.Pone) -- +(-2, 0) node[anchor=east] {P1};
                     \draw[<-](utcorr.Ptwo) -- +(-2, 0) node[anchor=east] {P2};
                     \draw[<-](utcorr.Reset) -- +(-2, 0) node[anchor=east] {Reset};
@@ -660,7 +745,6 @@
                     \draw[<-] (avalon.Reset) -- +(-2, 0) node[anchor=east] {Reset};
 
                     \draw[<-] (avalon.AskIrq) -- +(2, 0) node[anchor=west] {Ask\_irq};
-                    \draw[<-] (avalon.InitFifo) -- +(2, 0) node[anchor=west] {InitFifo};
                     \draw[<-] (avalon.CorrOut) -- +(2, 0) node[anchor=west] {CorrOut};
                     \draw[<-] (avalon.CorrOutLd) -- +(2, 0) node[anchor=west] {Corr\_out\_ld};
                     \draw[->] (avalon.FifoOut) -- +(2, 0) node[anchor=west] {FifoOut};
@@ -681,11 +765,11 @@
 
                     % Major busses
 
-                    \foreach [count=\ni] \txt in {Addr, R, W, Din, Dout, Irq\_n}{
+                    \foreach [count=\ni] \txt in {Addr, R, W, Din, Dout, Irq\_n, Reset}{
                         \draw[-] (-0.5 + 0.5*\ni, 0) -- (-0.5 + 0.5*\ni, 40) node[anchor=base] {\rotatebox{90}{\txt}};
                     }
 
-                    \foreach [count=\ni] \txt in {Decod, Words, FifoOut, CorrOutLd, CorrOut, InitFifo, Ask\_irq}{
+                    \foreach [count=\ni] \txt in {Decod, Words, FifoOut, CorrOutLd, CorrOut, Ask\_irq}{
                         \draw[-] (30.5 - 0.5*\ni, 0) -- (30.5 - 0.5*\ni, 40) node[anchor=base] {\rotatebox{90}{\txt}};
                     }
 
@@ -701,7 +785,7 @@
 
                     \node[shape=fifo] at (16, 30) (fifo) {Fifo};
                     \draw[-] (fifo.Dout) -- +(11, 0) node[connectionpoint] {};
-                    \draw (fifo.Init) -| +(-0.5, 1) -- +(13.5, 1) node[connectionpoint] {};
+                    \draw (fifo.Init) -- +(-11, 0) node[connectionpoint] {};
 
                     \node[trapezium, draw, rotate=-180, scale=3] at (13, 33) (muxfifo) {};
                     \draw (muxfifo.south west) -- +(0,0) node[anchor=north] {1};
@@ -742,7 +826,7 @@
                     \draw (andirq.input 1) -- +(-13.3, 0) node [connectionpoint] {};
                     \draw (andirq.input 2) -- +(-3.85, 0) node [connectionpoint] {};
                     \draw (irq.D) -- +(-1, 0) node[anchor=east] {1};
-                    \draw (irq.S) |- +(12, -0.25) node[connectionpoint] {};
+                    \draw (irq.S) |- +(12.5, -0.25) node[connectionpoint] {};
 
                     \node [or gate, rotate=90] at (16, 23.5) (andirqn) {};
                     \draw (andirqn.input 1) |- (irqen.Qn);
@@ -753,7 +837,7 @@
                     \draw (decode.Q) -- +(14.5, 0) node [connectionpoint] {};
                     \draw (decode.D) -- +(-13, 0) node [connectionpoint] {};
                     \draw (decode.D) -- +(0, 0) node [anchor=south east] {$[0]$};
-                    \draw (decode.R) |- +(12, 0.25) node [connectionpoint] {};
+                    \draw (decode.R) |- +(12.5, 0.25) node [connectionpoint] {};
                     \node [and gate, rotate=90] at (15, 6.5) (anddecode) {};
                     \draw (anddecode.output) -- (decode.S);
                     \draw (anddecode.input 1) |- +(-13.95, -0.25) node [connectionpoint] {};
@@ -761,7 +845,7 @@
 
                     \node [shape=counter] at (15, 3) (words) {Words};
                     \draw (words.Q) -- +(13.5, 0) node [connectionpoint] {};
-                    \draw (words.Raz) -| +(-0.5, -1.75) -- +(12.95, -1.75) node [connectionpoint] {};
+                    \draw (words.Raz) -| +(-0.5, -1.75) -- +(13.45, -1.75) node [connectionpoint] {};
                     \draw (words.Inc) -- +(-1, 0) node [and gate, anchor=output] (andwords) {};
                     \draw (andwords.input 1) -- +(-1.6, 0) node [connectionpoint] {};
                     \draw (andwords.input 2) -- +(-11.6, 0) node [connectionpoint] {};
