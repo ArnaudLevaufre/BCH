@@ -46,7 +46,7 @@ begin
         decode => decode,
         words => words,
         FifoOut => FifoOut,
-        initFifo => initFifo,
+        initFifo => reset,
         irq_n => irq_n
     );
 
@@ -67,8 +67,7 @@ begin
 
         ask_irq => ask_irq,
         raz_err => raz_err,
-        corr_out_ld => corr_out_ld,
-        initFifo => initFifo
+        corr_out_ld => corr_out_ld
     );
 
     comp_syndrome: entity syndrome port map(

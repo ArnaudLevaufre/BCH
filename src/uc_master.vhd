@@ -10,8 +10,7 @@ entity uc_master is
         nb_words: in unsigned(1 downto 0);
         start_syndrome, start_lut, start_corr: out std_logic;
         end_syndrome, end_lut, end_corr: in std_logic;
-        ask_irq, raz_err, corr_out_ld: out std_logic;
-        initFifo: out std_logic
+        ask_irq, raz_err, corr_out_ld: out std_logic
     );
 end uc_master;
 
@@ -24,9 +23,7 @@ begin
     begin
         if reset = '1' then
             current_state <= REPOS;
-            initFifo <= '1';
         elsif rising_edge(clk) then
-            initFifo <= '0';
             current_state <= next_state;
         end if;
     end process;
