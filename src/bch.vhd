@@ -16,7 +16,7 @@ entity bch is
 end bch;
 
 architecture arch_bch of bch is
-    signal corr_out_ld, ask_irq, decode, raz_err: std_logic;
+    signal ask_irq, decode, raz_err: std_logic;
     signal start_syndrome, start_lut, start_corr: std_logic;
     signal end_syndrome, end_lut, end_corr: std_logic;
     signal words: unsigned(1 downto 0);
@@ -40,7 +40,7 @@ begin
         D_out => D_out,
         addr => addr,
 
-        corr_out_ld => corr_out_ld,
+        corr_out_ld => end_corr,
         corr_out => corr_out,
         ask_irq => ask_irq,
         decode => decode,
@@ -66,8 +66,7 @@ begin
         end_corr => end_corr,
 
         ask_irq => ask_irq,
-        raz_err => raz_err,
-        corr_out_ld => corr_out_ld
+        raz_err => raz_err
     );
 
     comp_syndrome: entity syndrome port map(

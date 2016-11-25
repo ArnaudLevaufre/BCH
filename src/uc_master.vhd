@@ -10,7 +10,7 @@ entity uc_master is
         nb_words: in unsigned(1 downto 0);
         start_syndrome, start_lut, start_corr: out std_logic;
         end_syndrome, end_lut, end_corr: in std_logic;
-        ask_irq, raz_err, corr_out_ld: out std_logic
+        ask_irq, raz_err: out std_logic
     );
 end uc_master;
 
@@ -35,7 +35,6 @@ begin
         start_lut <= '0';
         start_corr <= '0';
         ask_irq <= '0';
-        corr_out_ld <= '0';
 
         next_state <= current_state;
 
@@ -84,7 +83,6 @@ begin
                     else
                         next_state <= SYN;
                     end if;
-                    corr_out_ld <= '1';
                 end if;
         end case;
     end process;
