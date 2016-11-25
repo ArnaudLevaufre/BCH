@@ -450,6 +450,7 @@
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, node distance=3cm, scale=0.7, every node/.style={scale=0.7}, circuit logic US]
+                    \tikzstyle{connectionpoint} = [circle, draw, fill=black, scale=0.5];
                     %\draw[help lines] (0, 0) grid (20,20);
 
                     \node[shape=counter] at (5,11) (p1counter) {P1};
@@ -508,6 +509,13 @@
                     \node at (10, 7.5)[anchor=south west] {10};
 
                     \draw[-,dashed] (2.5,2) -- (15.5, 2) -- (15.5, 16) -- (2.5, 16) -- (2.5, 2);
+
+                    \node[connectionpoint] at (7, 11) {};
+                    \node[connectionpoint] at (7, 10) {};
+                    \node[connectionpoint] at (7, 8.5) {};
+                    \node[connectionpoint] at (7, 6) {};
+                    \node[connectionpoint] at (11, 8.5) {};
+                    \node[connectionpoint] at (13.3, 14.4) {};
 
                 \end{tikzpicture}
                 \caption{Unité de traitement de la Look up table.}
