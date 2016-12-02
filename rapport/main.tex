@@ -44,6 +44,31 @@
 
     \chapter{Introduction}
 
+    Ce rapport présente le travail de conception et d'implémentation d'un
+    décodeur BCH réalisé dans le cadre du mini projet du cours de conception
+    sur puce de l'Enib.
+
+    \paragraph{}
+    Le décodeur BCH demandé doit être capable de détecter jusqu'a cinq erreurs
+    et d'en corriger au plus deux. Le décodeur travail sur des données codées
+    sur 21 bits et utilise 10 bits de redodance. La pair données et bits de
+    redondance forment un mot de 31 bits auquel on ajoute un bit 0 en poid for
+    pour former un mot de 32 bits. Le décodeur doit implémenter une interface
+    avalon le rendant compatible avec le processeur NiosII. Les communications
+    entre le décodeur et le processeur se fait par quatres registres: les
+    registres de status, de controle de donnée d'entrée et de sortie. Ces
+    registres ont un format de 32 bits.
+
+    \paragraph{}
+    Pour la lecture de ce rapport, il est important de noter plusieurs points
+    sur les schémas fonctionnels présentés. La connexion entre deux cables
+    croisés est représenté par un points. Deux cables croisés sans points ne se
+    connectent pas. Les entrées d'horloge et de reset sont présents sur les
+    blocks qui en ont besoins mais ne sont pas cablés sur les schéma pour
+    faciliter la lecture. Toute entrée reset et Clk est par défaut et sauf
+    indication contraire, considéré comme reliée à l'horloge et au reset
+    maitre. Les cas particuliers sont explicités.
+
     \chapter{Étude du circuit}
         \section{Architecture globale}
         La vue extérieur du décodeur BCH est imposé par le sujet et est
