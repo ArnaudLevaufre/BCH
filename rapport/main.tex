@@ -925,6 +925,18 @@
         \section{Décodeur BCH complet}
         \inputminted[firstline=0, lastline=113,breaklines]{VHDL}{../src/bch.vhd}
 
+        \chapter{Drivers et API}
+
+        \section{Définition des registres}
+        \inputminted[breaklines]{C}{../quartus/ip/BCH/inc/BCH_regs.h}
+
+        \section{API}
+        \subsection{Headers}
+        \inputminted[breaklines]{C}{../quartus/ip/BCH/inc/BCHAPI.h}
+        \subsection{Sources}
+        \inputminted[breaklines]{C}{../quartus/ip/BCH/src/BCHAPI.c}
+
+
     \end{appendices}
 
 \end{document}
