@@ -49,14 +49,14 @@
     sur puce de l'Enib.
 
     \paragraph{}
-    Le décodeur BCH demandé doit être capable de détecter jusqu'a cinq erreurs
-    et d'en corriger au plus deux. Le décodeur travail sur des données codées
-    sur 21 bits et utilise 10 bits de redodance. La pair données et bits de
-    redondance forment un mot de 31 bits auquel on ajoute un bit 0 en poid for
+    Le décodeur BCH demandé doit être capable de détecter jusqu'à cinq erreurs
+    et d'en corriger au plus deux. Le décodeur travaille sur des données codées
+    sur 21 bits et utilise 10 bits de redondance. La partie données et bits de
+    redondance forment un mot de 31 bits auquel on ajoute un bit 0 en poid fort
     pour former un mot de 32 bits. Le décodeur doit implémenter une interface
     avalon le rendant compatible avec le processeur NiosII. Les communications
     entre le décodeur et le processeur se fait par quatres registres: les
-    registres de status, de controle de donnée d'entrée et de sortie. Ces
+    registres de status, de contrôle, de donnée d'entrée et de sortie. Ces
     registres ont un format de 32 bits.
 
     \paragraph{}
@@ -64,17 +64,17 @@
     sur les schémas fonctionnels présentés. La connexion entre deux cables
     croisés est représenté par un points. Deux cables croisés sans points ne se
     connectent pas. Les entrées d'horloge et de reset sont présents sur les
-    blocks qui en ont besoins mais ne sont pas cablés sur les schéma pour
+    blocks qui en ont besoins mais ne sont pas cablés sur les schémas pour
     faciliter la lecture. Toute entrée reset et Clk est par défaut et sauf
     indication contraire, considéré comme reliée à l'horloge et au reset
     maitre. Les cas particuliers sont explicités.
 
     \chapter{Étude du circuit}
         \section{Architecture globale}
-        La vue extérieur du décodeur BCH est imposé par le sujet et est
-        présentée dans le figure~\ref{fig:bch} ci-dessous. Sa structure
+        La vue extérieur du décodeur BCH est imposée par le sujet et est
+        présentée dans la figure~\ref{fig:bch} ci-dessous. Sa structure
         interne est présentée dans la subsection~\ref{sec:fonc_bch}. On
-        retrouve les entrées et sorties nécéssaire pour définir une
+        retrouve les entrées et sorties nécéssaires pour définir une
         interface Avalon fonctionnelle.
 
             \begin{figure}[H]
@@ -99,7 +99,7 @@
             \subsection{Sous ensembldes fonctionnels du block BCH}
             \label{sec:fonc_bch}
             La réalisation du décodeur BCH se base sur cinq blocks
-            présentés dans les subsection suivantes.
+            présentés dans les subsections suivantes.
             \begin{itemize}
                 \item Le calcul du syndrome.
                 \item La look up table.
@@ -107,10 +107,10 @@
                 \item L'interface avalon.
                 \item La machine a état maitre.
             \end{itemize}
-            A l'eception de l'interface avaalon et de la machine a état, les
-            blocks sont relativement indépendants et peuvent être utilisé
+            A l'exception de l'interface avalon et de la machine à état, les
+            blocs sont relativement indépendants et peuvent être utilisés
             chacun séparément. Cela facilite, d'une part, le développement et
-            le test et, d'autre part, la réutilisation du code développé. Un
+            le test, et d'autre part, la réutilisation du code développé. Un
             codeur BCH pourrait par exemple réutiliser le block de calcul du
             syndrome. La figure~\ref{fig:bch_blocks}
 
@@ -199,12 +199,12 @@
 
         \section{Calcul du syndrome}
             Le calcul du syndrome est décomposé en une unité de traitement et
-            un unité de contrôle qui sont présentées dans les
+            une unité de contrôle qui sont présentées dans les
             sections~\ref{sec:ut_syndrome} et \ref{sec:uc_syndrome}. Le
             principe de fonctionnement est simple, l'utilisateur de ce bloc
             propose une donnée codée sur 32 bits sur l'entrée «~Data~» et
             démarre le calcul en imposant l'entrée «~Start~» à 1.  Une fois
-            calculé le syndrome est disponible sur la sortie «~Syndrome~» et le
+            calculé, le syndrome est disponible sur la sortie «~Syndrome~» et le
             drapeau «~End~» est passé à 1 sur une durée d'une période
             d'horloge.
 
