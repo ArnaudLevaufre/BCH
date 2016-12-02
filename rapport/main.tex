@@ -870,6 +870,11 @@
             \end{figure}
 
     \chapter{Développement du code VHDL}
+
+
+
+
+
     \chapter{Synthèse logique et simulation structurelle}
     \chapter{Spécification du composant librairie}
     \chapter{Présentation de l'API c}
@@ -880,6 +885,46 @@
     \end{thebibliography}
 
     \begin{appendices}
+
+        \chapter{Code VHDL}
+
+        \section{Calcul du syndrome}
+        \subsection{Unité de traitement}
+        \inputminted[firstline=0, lastline=51,breaklines]{VHDL}{../src/ut_syndrome.vhd}
+        \subsection{Unité de controle}
+        \inputminted[firstline=0, lastline=81,breaklines]{VHDL}{../src/uc_syndrome.vhd}
+        \subsection{Assemblage UT/UC}
+        \inputminted[firstline=0, lastline=44,breaklines]{VHDL}{../src/syndrome.vhd}
+
+        \section{Look up table}
+        \subsection{Unité de traitement}
+        \inputminted[firstline=0, lastline=84,breaklines]{VHDL}{../src/ut_lut.vhd}
+        \subsection{Unité de controle}
+        \inputminted[firstline=0, lastline=72,breaklines]{VHDL}{../src/uc_lut.vhd}
+        \subsection{Assemblage UT/UC}
+        \inputminted[firstline=0, lastline=90,breaklines]{VHDL}{../src/lut.vhd}
+
+        \section{Correcteur}
+        \subsection{Unité de traitement}
+        \inputminted[firstline=0, lastline=61,breaklines]{VHDL}{../src/ut_corr.vhd}
+        \subsection{Unité de controle}
+        \inputminted[firstline=0, lastline=53,breaklines]{VHDL}{../src/uc_corr.vhd}
+        \subsection{Assemblage UT/UC}
+        \inputminted[firstline=0, lastline=45,breaklines]{VHDL}{../src/corr.vhd}
+
+        \section{Fifo}
+        La pile fifo utilisée est celle proposé sur l'Ent.
+        \inputminted[firstline=0, lastline=65,breaklines]{VHDL}{../src/fifo.vhd}
+
+        \section{Interface Avalon}
+        \inputminted[firstline=0, lastline=86,breaklines]{VHDL}{../src/avalon.vhd}
+
+        \section{Unité de controle maitre}
+        \inputminted[firstline=0, lastline=90,breaklines]{VHDL}{../src/uc_master.vhd}
+
+        \section{Décodeur BCH complet}
+        \inputminted[firstline=0, lastline=113,breaklines]{VHDL}{../src/bch.vhd}
+
     \end{appendices}
 
 \end{document}
