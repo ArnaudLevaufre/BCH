@@ -414,7 +414,31 @@
 
 
         \section{Look up table}
+            La Look up table est décomposée en une unité de traitement et une
+            unité de controle qui sont présentées dans les
+            sections~\ref{sec:ut_lut} et \ref{sec:uc_lut}.  Le principe de
+            fonctionnement est celui présenté dans le sujet. Au démarrage, on
+            initialise 2 pointeurs P1 et P2 à 0 et 1 puis on incremente P2
+            jusqu'à 31, à chaque fois en comparant $LUT[P2]$ et $LUT[P1] \oplus
+            LUT[P2]$ au syndrome. Si on ne trouve pas le syndrome, on incremente
+            P1 et on remet P2 à $P1 + 1$.  Lorsque P1 vaut 31, ça signifier que
+            le message comporte plus de deux erreurs. Si $LUT[P1] == syndrome$,
+            il y a une erreur à la position P1, si $LUT[P1] \oplus LUT[P2] ==
+            syndrome$ alors il y a deux erreurs, aux positions P1 et P2.
+
+            Le bloc dispose d'une entrée «~Syndrome~», de 3 sorties, le nombre
+            d'erreurs «~err~», «~P1~» et «~P2~» les positions des erreurs si
+            detectées.
+
             \subsection{Unité de traitement}
+                L'unité de traitement est prsentée en section~\ref{fig:ut_lut}.
+                Elle est composée des deux registres P1 et P2, d'une LUT et
+                d'un registre dans lequel est sauvegardé le syndrome.  Les
+                sorties «~ERR1~» et «~ERR2~» sont mises à 1 lorsqu'une ou deux
+                ereurs ont été détéctées. Les sorties P1\_MAX et P2\_MAX sont
+                mises à 1 lorsque P1 ou P2 ont atteint leur valeur maximum.
+
+            \label{sec:ut_lut}
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, node distance=3cm, scale=0.7, every node/.style={scale=0.7}, circuit logic US]
@@ -487,10 +511,14 @@
 
                 \end{tikzpicture}
                 \caption{Unité de traitement de la Look up table.}
-                \label{fig:me_syndrome}
+                \label{fig:ut_lut}
             \end{figure}
 
             \subsection{Unité de controle}
+            \label{sec:uc_lut}
+            L'unité de controle est définie par la machine à état présentée en figure~\ref{fig:uc_lut}.
+            Elle est chargée de controller l'incrementation de P1 et P2 et le
+            chargement du code de l'erreur dans le registre «~err~».
 
             \begin{figure}[H]
                 \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm]
@@ -513,7 +541,7 @@
 
                 \end{tikzpicture}
                 \caption{Machine à état utilisée pour le calcul du syndrome}
-                \label{fig:me_syndrome}
+                \label{fig:uc_lut}
             \end{figure}
 
             \subsection{Définition des connexions entre l'UC et l'UT}
@@ -559,7 +587,6 @@
 
 
         \section{Correcteur}
-            \subsection{Unité de traitement}
             Le correcteur est basé sur un registre à décalage laissant passer
             un à un les 21 bits d'information du message. Ceux-ci seront
             corrigés, c'est à dire inversés, si leur position correspond avec
@@ -570,7 +597,8 @@
             de sortie désiré est par la suite créé et le nouveau message ainsi
             constitué sera maintenu jusqu'à ce qu'un autre cycle de la Look Up
             Table soit complété. Le schéma logique présentant ce foncitonnent
-            est donné dans la figure~\ref{fig:ut_corr}
+            est donné dans la figure~\ref{fig:ut_corr}.
+            \subsection{Unité de traitement}
 
             \begin{figure}[H]
                 \centering
@@ -900,7 +928,6 @@
             \end{figure}
 
     \chapter{Développement du code VHDL}
-
         \section{Calcul du syndrome}
             \paragraph{}
             Le calcul du syndrome n'a pas posé de problèmes d'implémentation.
@@ -934,6 +961,47 @@
             % TODO Screenshot simulation
 
         \section{Look Up Table}
+            \paragraph{}
+                La Look Up Table n'a pas posé de problèmes d'implémentation. Le
+                code VHDL de l'unité de traitement, de l'unité de contrôle et
+                de l'assemblage est disponible en annexe \ref{ann:vhdl_lut}.
+
+            \paragraph{}
+                L'unité de traitement est composé d'un unique processus, sensible
+                uniquement à l'horloge qui est chargé de la gestion P1 ou P2 en
+                fonction des signaux venant de l'unité de contrôle.
+                Elle possède aussi les sorties combinatoires suivantes:
+                \begin{itemize}
+                    \item \verb|P1_MAX| indiquant si le pointeur 1 a atteint sa valeur maximale
+                    \item \verb|P2_MAX| indiquant si le pointeur 2 a atteint sa valeur maximale
+                    \item \verb|ERR1| indiquant si une seule erreur a été détectée
+                    \item \verb|ERR2| indiquant si deux erreurs ont été détectées
+                \end{itemize}
+
+            \paragraph{}
+                Le contrôle de P1 et de P2 se fait via les signaux internes suivants:
+                \begin{itemize}
+                    \item \verb|INC_P1| pour incrémenter P1
+                    \item \verb|INC_P2| pour incrémenter P2
+                    \item \verb|RAZ| pour remettre à 0 P1 et P2 à 1
+                    \item \verb|LD_P2| pour mettre P2 à la valeur de P1 courante
+                \end{itemize}
+
+            \paragraph{}
+                La validation de la Look Up Table est faite à partir de
+                syndromes calculés selon le tableau dans le sujet. Par exemple,
+                pour le syndrome \verb|0000110010|, on vérifie que l'on obtient
+                bien 2 erreurs, aux positions 15 et 18. Le même genre de test
+                est effectué pour les cas extrêmes. Ce cas et les signaux
+                intéressants sont présentés en figure \ref{fig:sim_lut}.
+
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/lut_simu}
+                    \caption{Validation LUT}
+                    \label{fig:sim_lut}
+                \end{figure}
+
         \section{Correcteur}
         \section{Interface Avalon}
         \section{Assemblage des briques}
@@ -1018,6 +1086,7 @@
         \inputminted[firstline=0, lastline=44,breaklines]{VHDL}{../src/syndrome.vhd}
 
         \section{Look up table}
+        \label{ann:vhdl_lut}
         \subsection{Unité de traitement}
         \inputminted[firstline=0, lastline=84,breaklines]{VHDL}{../src/ut_lut.vhd}
         \subsection{Unité de controle}
