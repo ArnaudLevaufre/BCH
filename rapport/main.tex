@@ -726,7 +726,18 @@
             \end{figure}
 
         \section{Interface Avalon}
+            Afin d'abstraire l'utilisation de l'interface avalon nous
+            définissons un bloque responsable des gérer tous les registres et
+            d'assembler les bus de donnée spécifié par le cahie des charges.
+
             \subsection{Vue extérieure}
+            Du point de vue extérieur le bloque Avalon a plusieurs entrées
+            sorties que l'on regroupe en deux types: Les entrées et sortites
+            spécifié par l'interface avalon de nios et les entrée sorties
+            spécialisés utilisée en interne par composant. Ces groupes sont
+            présenté respectivement à gauche et droite du bloque avalon dont le
+            schéma est présenté en figure~\ref{fig:int_avalon}.
+
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, scale=1, every node/.style={scale=1}, circuit logic US]
@@ -750,10 +761,29 @@
 
                 \end{tikzpicture}
                 \caption{Vue extérieur du block avalon}
-                \label{fig:me_syndrome}
+                \label{fig:int_avalon}
             \end{figure}
 
-            \subsection{schéma fonctionnel}
+            \subsection{Schéma fonctionnel}
+
+            La fugure~\ref{fig:avalon_fonc} présente le shéma interne du bloque
+            avalon. On y trouve en premier lieux tous les signaux d'entrées et
+            sortie de l'interface Avalon Nios II à gauche et tous les signaux
+            d'entrée sortie interne au bloque BCH à droite. Les liaisons se
+            lisent de la même façon que dans Qsys. On trouve ensuite un
+            décodeur d'adresse, block combinatoire qui permet de transformer
+            l'adresse donné au block avalon en une selection de registre de
+            status, controle ou donnée. La pile Fifo est intégrée au bloque
+            avalon car elle sert à la communication bidirectionelle avec
+            l'interface avalon. De pari avec la pile on trouve un compteur
+            donnant le nombre de messages à traiter au démarage du BCH. Le
+            compteur est nécéssaire car la pile d'envoi et de réception est
+            partagée et qu'il n'est donc pas possible de ce fier au niveau de
+            la Fifo. On trouve les registres permettant de conserver les
+            informations des différents registres. Enfin on trouve l'assemblage
+            des valeurs pour les bus de données et le multiplexeur qui permet de
+            selectionner le bus relié au bus de données de l'interface avalon.
+
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, scale=0.5, every node/.style={scale=0.5}, circuit logic US]
@@ -866,7 +896,7 @@
 
                 \end{tikzpicture}
                 \caption{Circuit logique du wrapper avalon}
-                \label{fig:me_syndrome}
+                \label{fig:avalon_fonc}
             \end{figure}
 
     \chapter{Développement du code VHDL}
@@ -894,13 +924,12 @@
 
             \paragraph{}
             La validation du calcul de syndrome est faite à partir des exemples
-            ru sujet. On place en entrée la valeur \verb$0x435A0BD5$ et on s'attend
-            à obtenir un syndrome de 0 apres les 31 coups d'horloge. On place
-            ensuite des valeurs ayant des erreur et on vérifie que les
-            syndromes correspondent a des syndromes non null. La validité du
-            syndrome dans la Look Up Table peut être vérifier manuellement et
-            sera vérifiée automatiquement par la suite de test de l'assemblage
-            syndrome/lut.
+            du sujet. On place en entrée la valeur \verb$0x435A0BD5$ et on
+            s'attend à obtenir un syndrome de 0 apres les 31 coups d'horloge.
+            On place ensuite des valeurs ayant des erreur et on vérifie que les
+            syndromes sont non null. La validité du syndrome dans la Look Up
+            Table peut être vérifié manuellement et sera vérifiée
+            automatiquement par la suite de test de l'assemblage syndrome/lut.
 
             % TODO Screenshot simulation
 
