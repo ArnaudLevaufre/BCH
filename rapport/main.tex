@@ -941,6 +941,63 @@
     \chapter{Synthèse logique et simulation structurelle}
     \chapter{Spécification du composant librairie}
     \chapter{Présentation de l'API c}
+
+    Maintenant que le composant bibliothèque est implémenté et que le projet
+    quartus est compilé et flashé il est nécéssaire d'implementer une api
+    permettant d'utiliser le composant de facon assez confortable. L'api que
+    nous proposont est assez riche.
+
+    \section{Structure de donnée}
+
+    Inclue en annexe~\ref{ann:api_h}, nous avons écrit une structure qui permet
+    de récupérer une paire, message et erreur. Le message présent dans la
+    sructure est le message corrigé si possible et le champ erreur permet de
+    connaitre le nombre d'erreurs détectés.
+
+    \section{Définition de l'API}
+
+    L'api est définie en annexe~\ref{ann:api_h} mais est présentée plus en
+    détail dans les sections suivantes.
+
+    \subsection{Envoi et récupération de messages}
+
+    Deux fonctins permettent l'échange de message à corriger et corrigé. Il
+    s'agit de \verb$BCH_push_msg$ et \verb$BCH_pop_msg$. La première envoie un
+    message à corriger sous forme d'entier non signé et la seconde récupère un
+    message corrigé sous forme de structure \verb$bch_msg$.
+
+    \subsection{Lecture du registre de status}
+
+    La lecture du status ce fait avec la fonction \verb$BCH_read_status$ qui
+    renvoi la valeur non signé présente sur le bus de status. L'utilisateur à
+    alors la responsabilité d'utilisé les opérateurs logique «~et~» et «~ou~»
+    afin de récupérer la valeur qui l'intéresse dans le status. Si une seule
+    valeur l'intéresse, ou que le cout de lecture répété d'un registre n'est
+    pas dérangeant l'utilisateur dispose de fonctions racourcis pui permettent
+    d'acceder à une information ciblé du status~:
+    \begin{itemize}
+        \item \verb$BCH_is_full$ nous donne si la pile est pleinne
+        \item \verb$BCH_is_empty$ nous donne si la pile est vide ou non
+        \item \verb$BCH_is_irq$ nous donne si le traitement est terminé
+    \end{itemize}
+
+    \subsection{Lecture et écriture du registre de controle}
+
+    De la même manière que pour le registre de status l'utilisteur dispose des
+    fonctions \verb$BCH_read_ctrl$ et de \verb$BCH_write_ctrl$. Et de même il
+    peut utiliser des fonctions racourcis pour lire et changer des valeurs sans
+    avoir a manipuler manuellement le registre de controle. Les fonctions sont
+    les suivantes~:
+    \begin{itemize}
+        \item \verb$BCH_is_irq_enabled$ qui permet de savoir si les irq sont activé ou non
+        \item \verb$BCH_is_decoding$ qui permet de savoir si le decodeur est en marche
+        \item \verb$BCH_ack_irq$ qui permet de désarmer une interruption
+        \item \verb$BCH_enable_irq$ qui petmet d'activer les interruptions
+        \item \verb$BCH_isable_irq$ qui permet de désactiver les interruptions
+        \item \verb$BCH_start$ qui permet de lancer le décodage
+    \end{itemize}
+
+
     \chapter{Application de démonstration}
 
     \begin{thebibliography}{99}
@@ -996,6 +1053,7 @@
 
         \section{API}
         \subsection{Headers}
+        \label{ann:api_h}
         \inputminted[breaklines]{C}{../quartus/ip/BCH/inc/BCHAPI.h}
         \subsection{Sources}
         \inputminted[breaklines]{C}{../quartus/ip/BCH/src/BCHAPI.c}
