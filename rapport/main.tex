@@ -1010,7 +1010,69 @@
 
         \section{Correcteur}
         \section{Interface Avalon}
+            \paragraph{}
+                L'interface avalon permet de s'interfacer avec le processeur. Cette
+                partie n'a pas posé de problème particulier. Le code est disponible en annexe
+                \ref{ann:vdhl_avalon}
+
+            \paragraph{}
+                L'interface avalon est composée d'un processus réagissant à
+                l'horloge ainsi qu'a un signal reset.  Ce processus permet de
+                gérer les écritures sur les coups d'horloge.  Elle possède
+                aussi plusieurs sorties combinatoires destinées à la sortie
+                vers le processeur, au contrôle de la FIFO et aux
+                interruptions.
+
+            \paragraph{}
+                Afin de vérifier le fonctionnement de l'interface, nous avons
+                écrit un test pour tester l'écriture et la lecture de tous les
+                registres ainsi que les interruptions. La figure
+                \ref{fig:sim_avalon} montre l'écriture dans la pile depuis
+                l'interface avalon.
+
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/avalon_simu}
+                    \caption{Validation avalon}
+                    \label{fig:sim_avalon}
+                \end{figure}
+
         \section{Assemblage des briques}
+            \paragraph{}
+                Une fois toutes les briques crées, il faut les assembler et les
+                piloter. Là encore, pas de soucis majeurs, il s'agit d'un
+                simple câblage et d'une machine à états maitre.  Le code source
+                de l'assemblage est disponible en annexe \ref{ann:vhdl_bch} et
+                celui de la machine à état maitre en annexe \ref{ann:vhdl_master}.
+
+            \paragraph{}
+                La machine à états maitre permet de piloter tous les blocs de notre décodeur.
+                Pour la tester, nous avons juste envoyé le signal start puis
+                envoyé les signaux de fin de fonctionnement de chaque bloc,
+                dans l'ordre. Nous avons aussi testé avec un syndrome nul pour vérifier
+                que dans ce cas, la Look Up Table était bien ignorée.
+                Le résultat de ce test peut être vu en figure \ref{fig:sim_master}
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/master_simu}
+                    \caption{Validation machine à états maitre}
+                    \label{fig:sim_master}
+                \end{figure}
+
+            \paragraph{}
+                La validation de l'assemblage complet est fait par une
+                simulation de notre programme de test en forçant les signaux à
+                la main .  On envoie des messages avec 3, 2, 1 et 0 erreurs et
+                on vérifie qu'on obtient bien une interruption et le message
+                corrigé si possible.  La vérification est visible en figure
+                \ref{fig:sim_bch}
+
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/bch_simu}
+                    \caption{Validation de l'assemblage}
+                    \label{fig:sim_bch}
+                \end{figure}
 
     \chapter{Synthèse logique et simulation structurelle}
     \chapter{Spécification du composant librairie}
@@ -1086,7 +1148,7 @@
         \label{ann:vhdl_syndrome}
         \subsection{Unité de traitement}
         \inputminted[firstline=0, lastline=51,breaklines]{VHDL}{../src/ut_syndrome.vhd}
-        \subsection{Unité de controle}
+        \subsection{Unité de contrôle}
         \inputminted[firstline=0, lastline=81,breaklines]{VHDL}{../src/uc_syndrome.vhd}
         \subsection{Assemblage UT/UC}
         \inputminted[firstline=0, lastline=44,breaklines]{VHDL}{../src/syndrome.vhd}
@@ -1095,7 +1157,7 @@
         \label{ann:vhdl_lut}
         \subsection{Unité de traitement}
         \inputminted[firstline=0, lastline=84,breaklines]{VHDL}{../src/ut_lut.vhd}
-        \subsection{Unité de controle}
+        \subsection{Unité de contrôle}
         \inputminted[firstline=0, lastline=72,breaklines]{VHDL}{../src/uc_lut.vhd}
         \subsection{Assemblage UT/UC}
         \inputminted[firstline=0, lastline=90,breaklines]{VHDL}{../src/lut.vhd}
@@ -1103,7 +1165,7 @@
         \section{Correcteur}
         \subsection{Unité de traitement}
         \inputminted[firstline=0, lastline=61,breaklines]{VHDL}{../src/ut_corr.vhd}
-        \subsection{Unité de controle}
+        \subsection{Unité de contrôle}
         \inputminted[firstline=0, lastline=53,breaklines]{VHDL}{../src/uc_corr.vhd}
         \subsection{Assemblage UT/UC}
         \inputminted[firstline=0, lastline=45,breaklines]{VHDL}{../src/corr.vhd}
@@ -1113,12 +1175,15 @@
         \inputminted[firstline=0, lastline=65,breaklines]{VHDL}{../src/fifo.vhd}
 
         \section{Interface Avalon}
+        \label{ann:vhdl_avalon}
         \inputminted[firstline=0, lastline=86,breaklines]{VHDL}{../src/avalon.vhd}
 
-        \section{Unité de controle maitre}
+        \section{Unité de contrôle maitre}
+        \label{ann:vhdl_master}
         \inputminted[firstline=0, lastline=90,breaklines]{VHDL}{../src/uc_master.vhd}
 
         \section{Décodeur BCH complet}
+        \label{ann:vhdl_bch}
         \inputminted[firstline=0, lastline=113,breaklines]{VHDL}{../src/bch.vhd}
 
         \chapter{Drivers et API}
