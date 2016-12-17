@@ -954,11 +954,17 @@
             du sujet. On place en entrée la valeur \verb$0x435A0BD5$ et on
             s'attend à obtenir un syndrome de 0 apres les 31 coups d'horloge.
             On place ensuite des valeurs ayant des erreur et on vérifie que les
-            syndromes sont non null. La validité du syndrome dans la Look Up
-            Table peut être vérifié manuellement et sera vérifiée
-            automatiquement par la suite de test de l'assemblage syndrome/lut.
+            syndromes sont non null (voir figure~\ref{fig:sim_syndrome}). La
+            validité du syndrome dans la Look Up Table peut être vérifié
+            manuellement et sera vérifiée automatiquement par la suite de test
+            de l'assemblage syndrome/lut.
 
-            % TODO Screenshot simulation
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth]{./images/syndrome_simu.png}
+                \caption{Validation calcul du syndrome}
+                \label{fig:sim_syndrome}
+            \end{figure}
 
         \section{Look Up Table}
             \paragraph{}
