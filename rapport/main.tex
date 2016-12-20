@@ -435,7 +435,7 @@
                 Elle est composée des deux registres P1 et P2, d'une LUT et
                 d'un registre dans lequel est sauvegardé le syndrome.  Les
                 sorties «~ERR1~» et «~ERR2~» sont mises à 1 lorsqu'une ou deux
-                ereurs ont été détéctées. Les sorties P1\_MAX et P2\_MAX sont
+                erreurs ont été détéctées. Les sorties P1\_MAX et P2\_MAX sont
                 mises à 1 lorsque P1 ou P2 ont atteint leur valeur maximum.
 
             \label{sec:ut_lut}
@@ -596,10 +596,25 @@
             l'unité de contrôle de réaliser précisément 21 décalages. Le format
             de sortie désiré est par la suite créé et le nouveau message ainsi
             constitué sera maintenu jusqu'à ce qu'un autre cycle de la Look Up
-            Table soit complété. Le schéma logique présentant ce foncitonnent
-            est donné dans la figure~\ref{fig:ut_corr}.
+            Table soit complété. Cela est dû à la présence du registre d'erreur
+            Err dans la composition du message corrigé final. Les schémas logiques
+            présentant ce fonctionnement sont donnés dans 
+            les figures~\ref{fig:ut_corr} et ~\ref{fig:uc_corr}.
             \subsection{Unité de traitement}
-
+                L'unité de traitement présentée ci-dessous en 
+                figure ~\ref{fig:ut_corr} est composée d'un compteur 
+                permettant de connaitre la position, dans le message, du bit en
+                cours de traitement. Cette information va être comparée avec
+                les positions des erreurs détectées,P1 et P2, provenant de la
+                Look Up Table. Ces positions d'erreurs seront prises en compte
+                ou non grâce à l'utilisation de multiplexeurs commandés par le
+                registre d'erreurs Err. Si l'une des comparaisons est valide et
+                confirmée par le registre d'erreur, le bit actuel sera inversé
+                via le concours d'un autre multiplexeur. Le décalage bit par 
+                bit du message et la réception de celui-ci après le passage par
+                le multiplexeur correcteur, sont réalisés par un registre de 
+                décalage et un dernier registre permettant la recomposition 
+                du message. 
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth, scale=0.6, every node/.style={scale=0.6}, circuit logic US]
@@ -697,6 +712,14 @@
             \end{figure}
 
             \subsection{Unité de contrôle}
+                L'unité de de contrôle qui est utilisée pour la correction du 
+                message est représentée en figure~\ref{fig:uc_corr}.
+                Elle contrôle l'incrémentation du compteur Count afin de 
+                parcourir les 21 bits d'information en les décalant. 
+                Lorsque les 21 coups d'horloge ont été réalisés, elle signale
+                la fin du processus de correction et met l'unité de traitement
+                en mode Idle. Elle y restera jusqu'à ce qu'elle recoive le 
+                signal start\_corr de la part de la machine à état principale.
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm]
@@ -714,7 +737,7 @@
 
                 \end{tikzpicture}
                 \caption{Machine à état utilisée pour la correction d'erreur}
-                \label{fig:me_syndrome}
+                \label{fig:uc_corr}
             \end{figure}
 
             \subsection{Définition des connexions entre l'UC et l'UT}
@@ -794,7 +817,7 @@
 
             \subsection{Schéma fonctionnel}
 
-            La fugure~\ref{fig:avalon_fonc} présente le shéma interne du bloque
+            La fugure~\ref{fig:avalon_fonc} présente le shéma interne du bloc
             avalon. On y trouve en premier lieux tous les signaux d'entrées et
             sortie de l'interface Avalon Nios II à gauche et tous les signaux
             d'entrée sortie interne au bloque BCH à droite. Les liaisons se
@@ -932,7 +955,7 @@
             \paragraph{}
             Le calcul du syndrome n'a pas posé de problèmes d'implémentation.
             Les codes VHDL de l'unité de traitement, de l'unité de contrôle et
-            l'assemblage est disponnible en annexe~\ref{ann:vhdl_syndrome}.
+            l'assemblage sont disponibles en annexe~\ref{ann:vhdl_syndrome}.
 
             \paragraph{}
             L'unité de contrôle embarque un décompteur pour attendre les 31
@@ -1003,11 +1026,115 @@
                 \end{figure}
 
         \section{Correcteur}
+            \paragraph{}
+                Le développement du correcteur n'a pas posé de problèmes
+                particuliers. Les codes VHDL de l'unité de traitement, de 
+                l'unité de contrôle et l'assemblage sont disponibles en 
+                annexe~\ref{ann:vhdl_correcteur}.
+            
+            \paragraph{}
+                L'unité de traitement est composée d'un unique processus,
+                uniquement sensible à l'horloge. Il se charge du compteur
+                interne ainsi que des divers signaux de chargement et de
+                décalage provenant de l'unité de contrôle.
+                Elle possède aussi deux sorties combinatoires :     
+                 \begin{itemize}
+                    \item \verb|D_CORR_OUT| pour rendre le résultat final de la 
+                        correction du message disponible dans le système principal.
+                    \item \verb|CPT| pour que l'unité de contrôle ait en temps
+                        réel l'état du compteur afin de prendre les décisions.
+                \end{itemize}
+
+            \paragraph{}
+                Le contrôle des registres de décalage et de recompostion 
+                s'effectue grâce aux signaux suivants :
+                 \begin{itemize}
+                    \item \verb|DEC_BUF| pour que le registre contenant le
+                        message à traiter réalise un décalage de 1 bit vers la
+                         droite, soit du MSB vers le LSB. 
+                    \item \verb|LD_BUF| pour charger un nouveau message dans le
+                        registre de décalage.
+                    \item \verb|LD_CORR| pour charger un nouveau bit dans le
+                        registre recomposant le message corrigé.
+                \end{itemize}
+            
+            \paragraph{}
+                La validation du correcteur s'effectue en donnant le message de
+                l'example, sans erreur, et en lui modifiant d'abord un, puis
+                plusieurs bits. On s'attend ensuite à récupérer le message de
+                l'example, donc corrigé par le module. On peut vérifier ce
+                fonctionnement pour une et deux erreurs. Dans le cas ou il n'y
+                a pas d'erreurs, le message n'est bien évidemment pas modifié.
+                Lorsque plus de 2 erreurs sont présentes, le message est
+                corrigé, mais en un autre message, plus proche statistiquement
+                que le message d'origine.
+
+                % TODO Screenshots des differents cas 
+
         \section{Interface Avalon}
         \section{Assemblage des briques}
 
     \chapter{Synthèse logique et simulation structurelle}
+        \paragraph{}
+            La figure ~\ref{fig:BCH_0_component} montre le module $BCH_0$, dans
+            la liste des modules synthétisés qui seront chargés sur le processeur.
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/BCH_0_component}
+            \caption{Composant BCH ajouté aux modules du processeur}
+            \label{fig:BCH_0_component}
+        \end{figure}
+
     \chapter{Spécification du composant librairie}
+        \paragraph{}
+            Les différentes figures qui suivent, décrivent les diverses
+            parties du composant de librairie issu du code vhd. On pourra y
+            voir les caractéristiques et les connexions des différents signaux
+            notables du module BCH que nous avons créé.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/BCH_0_block_diagram}
+            \caption{Diagramme bloc du BCH et ses signaux}
+            \label{fig:BCH_0_block_diagram}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/BCH_hw_signals}
+            \caption{Connexions et caractéristiques des signaux du module BCH}
+            \label{fig:BCH_hw_signals}
+        \end{figure}
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/BCH_0_parameters}
+            \caption{Paramètres de synthétisation du composant BCH}
+            \label{fig:BCH_0_parameters}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/interrupt_sender}
+            \caption{Paramètres du gestionnaire d'interruptions du BCH}
+            \label{fig:interrupt_sender}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/clock_sink}
+            \caption{Paramètres du signal d'horloge connecté au BCH}
+            \label{fig:clock_sink}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/reset_sink}
+            \caption{Paramètres du signal de reset connecté au BCH}
+            \label{fig:reset_sink}
+        \end{figure}
+
     \chapter{Présentation de l'API c}
 
     Maintenant que le composant bibliothèque est implémenté et que le projet
@@ -1095,6 +1222,7 @@
         \inputminted[firstline=0, lastline=90,breaklines]{VHDL}{../src/lut.vhd}
 
         \section{Correcteur}
+        \label{ann:vhdl_correcteur}
         \subsection{Unité de traitement}
         \inputminted[firstline=0, lastline=61,breaklines]{VHDL}{../src/ut_corr.vhd}
         \subsection{Unité de controle}
