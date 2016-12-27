@@ -5,7 +5,7 @@ all: $(FILENAME).pdf
 
 $(FILENAME).pdf: $(FILENAME).tex $(patsubst %,%.tex,${DEPS})
 	pdflatex -shell-escape  $(FILENAME).tex
-	makeglossaries $(FILENAME)
+	#makeglossaries $(FILENAME)
 	pdflatex -shell-escape $(FILENAME).tex
 
 view:
