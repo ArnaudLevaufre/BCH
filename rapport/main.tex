@@ -1256,10 +1256,43 @@
         \inputminted[breaklines]{C}{../quartus/ip/BCH/src/BCHAPI.c}
 
         \chapter{Code applicatif de démonstration}
-        \inputminted[breaklines]{C}{../quartus/software/BCH/main.c}
+
     
         \paragraph{}
-        Le code applicatif ci-dessus génère les sorties suivantes dans la console :
+        Dans le code applicatif présenté ci-dessous, nous réalisons un test de
+        fonctionnement des demandes d'interruptions et d'appel de la routine
+        d'interruption, si celle-ci à été préalablement autorisée. Nous envoyons
+        deux séries de 4 messages, chacune allant progressivement de 0 erreurs
+        pour le premier message, à trois erreurs pour le quatrième. Dans les
+        trois premiers cas, on s'attends à ce que au final, le bon message
+        soit récupéré. Le dernier cependant, comportant trois erreurs, sera
+        corrigé en un message qui n'est pas le message d'origine. Cela est du
+        au fait que ce modèle de BCH ne peut corriger que deux erreurs au
+        maximum, et en détecter jusqu'à trois.
+        
+        \paragraph{}
+        La première série de message est donc donnée au BCH, qui une fois les 
+        interruptions autorisées, commencera à les traiter. Lorsque tous les
+        messages ont été corrigés, le drapeau de demande d'interruption va se
+        lever. Les interruptions étant activées, la routine sera lancée et
+        videra la pile en nous faisant part des résultats.
+        
+        \paragraph{}
+        La deuxième série de message, identique à la première, sera passée au
+        BCH, mais cette fois ci, les demandes d'interruptions seront
+        désactivées. Lorsque le BCH aura terminé le traitement des messages,
+        le drapeau de demande d'interruption se lèvera bien de nouveau, mais
+        la routine d'interruption ne sera pas déclanchée. C'est donc bien le
+        fonctionnement souhaité qui réalisé. Afin d'être certain que les
+        messages ont cependant bien été traités, à la suite de la levée du 
+        drapeau de demande d'interruption du BCH, nous venons vider la pile
+        en faisant à nouveau part des résultats. Résultats qui sont bien les 
+        mêmes que précédemment.
+        
+        \inputminted[breaklines]{C}{../quartus/software/BCH/main.c}
+        
+        \paragraph{}
+        Le code applicatif présenté précédemment génère les sorties suivantes dans la console :
 
 
         \paragraph{}
