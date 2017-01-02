@@ -57,7 +57,7 @@
     sur les schémas fonctionnels présentés. La connexion entre deux câbles
     croisés est représenté par un point. Deux câbles croisés sans points ne se
     connectent pas. Les entrées d'horloge et de reset sont présents sur les
-    bloques qui en ont besoins mais ne sont pas câblés sur les schémas pour
+    blocs qui en ont besoins mais ne sont pas câblés sur les schémas pour
     faciliter la lecture. Toute entrée reset et Clk est par défaut et sauf
     indication contraire, considéré comme reliée à l'horloge et au reset
     maitre. Les cas particuliers sont explicités.
@@ -91,20 +91,20 @@
 
             \subsection{Sous ensembles fonctionnels du bloc BCH}
             \label{sec:fonc_bch}
-            La réalisation du décodeur BCH se base sur cinq bloques présentés
+            La réalisation du décodeur BCH se base sur cinq blocs présentés
             dans les sections suivantes.
             \begin{itemize}
                 \item Le calcul du syndrome.
                 \item La look up table.
                 \item Le correcteur d'erreur.
                 \item L'interface avalon.
-                \item La machine a état maitre.
+                \item La machine à états maitre.
             \end{itemize}
-            A l'exception de l'interface avalon et de la machine à état, les
+            A l'exception de l'interface avalon et de la machine à états, les
             blocs sont relativement indépendants et peuvent être utilisés
             chacun séparément. Cela facilite, d'une part, le développement et
             le test, et d'autre part, la réutilisation du code développé. Un
-            codeur BCH pourrait par exemple réutiliser le bloque de calcul du
+            codeur BCH pourrait par exemple réutiliser le bloc de calcul du
             syndrome. La figure~\ref{fig:bch_blocks}
 
             \begin{figure}[H]
@@ -774,7 +774,7 @@
             d'assembler les bus de donnée spécifié par le cahier des charges.
 
             \subsection{Vue extérieure}
-            Du point de vue extérieur le bloque Avalon a plusieurs entrées
+            Du point de vue extérieur le bloc Avalon a plusieurs entrées
             sorties que l'on regroupe en deux types~: Les entrées et sorties
             spécifié par l'interface avalon et les entrée sorties spécialisés
             utilisée en interne par composant. Ces groupes sont présentés
@@ -803,7 +803,7 @@
                     \draw[->] (avalon.Decode) -- +(2, 0) node[anchor=west] {Decode};
 
                 \end{tikzpicture}
-                \caption{Vue extérieur du bloque avalon}
+                \caption{Vue extérieur du bloc avalon}
                 \label{fig:int_avalon}
             \end{figure}
 
@@ -1132,7 +1132,7 @@
                 piloter. Là encore, pas de soucis majeurs, il s'agit d'un
                 simple câblage et d'une machine à états maitre.  Le code source
                 de l'assemblage est disponible en annexe \ref{ann:vhdl_bch} et
-                celui de la machine à état maitre en annexe \ref{ann:vhdl_master}.
+                celui de la machine à états maitre en annexe \ref{ann:vhdl_master}.
 
             \paragraph{}
                 La machine à états maitre permet de piloter tous les blocs de notre décodeur.
