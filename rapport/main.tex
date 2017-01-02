@@ -45,19 +45,19 @@
     Le décodeur BCH demandé doit être capable de détecter jusqu'à cinq erreurs
     et d'en corriger au plus deux. Le décodeur travaille sur des données codées
     sur 21 bits et utilise 10 bits de redondance. Les parties données et bits de
-    redondance forment un mot de 31 bits auquel on ajoute un bit 0 en poid fort
+    redondance forment un mot de 31 bits auquel on ajoute un bit 0 en poids fort
     pour former un mot de 32 bits. Le décodeur doit implémenter une interface
     avalon le rendant compatible avec le processeur NiosII. Les communications
-    entre le décodeur et le processeur se fait par quatres registres: les
-    registres de status, de contrôle, de donnée d'entrée et de sortie. Ces
+    entre le décodeur et le processeur se fait par quatre registres: les
+    registres de statu, de contrôle, de donnée d'entrée et de sortie. Ces
     registres ont un format de 32 bits.
 
     \paragraph{}
     Pour la lecture de ce rapport, il est important de noter plusieurs points
-    sur les schémas fonctionnels présentés. La connexion entre deux cables
-    croisés est représenté par un points. Deux cables croisés sans points ne se
+    sur les schémas fonctionnels présentés. La connexion entre deux câbles
+    croisés est représenté par un points. Deux câbles croisés sans points ne se
     connectent pas. Les entrées d'horloge et de reset sont présents sur les
-    blocks qui en ont besoins mais ne sont pas cablés sur les schémas pour
+    bloques qui en ont besoins mais ne sont pas câblés sur les schémas pour
     faciliter la lecture. Toute entrée reset et Clk est par défaut et sauf
     indication contraire, considéré comme reliée à l'horloge et au reset
     maitre. Les cas particuliers sont explicités.
@@ -66,8 +66,8 @@
         \section{Architecture globale}
         La vue extérieur du décodeur BCH est imposée par le sujet et est
         présentée dans la figure~\ref{fig:bch} ci-dessous. Sa structure
-        interne est présentée dans la subsection~\ref{sec:fonc_bch}. On
-        retrouve les entrées et sorties nécéssaires pour définir une
+        interne est présentée dans la section~\ref{sec:fonc_bch}. On
+        retrouve les entrées et sorties nécessaires pour définir une
         interface Avalon fonctionnelle.
 
             \begin{figure}[H]
@@ -85,14 +85,14 @@
                     \draw[->] (bch.Irqn) -- +(1, 0) node[anchor=west] {Irq\_n};
 
                 \end{tikzpicture}
-                \caption{Vue éxtérieur du block BCH}
+                \caption{Vue extérieur du bloques BCH}
                 \label{fig:bch}
             \end{figure}
 
-            \subsection{Sous ensembldes fonctionnels du block BCH}
+            \subsection{Sous ensembles fonctionnels du bloque BCH}
             \label{sec:fonc_bch}
-            La réalisation du décodeur BCH se base sur cinq blocks
-            présentés dans les subsections suivantes.
+            La réalisation du décodeur BCH se base sur cinq bloques présentés
+            dans les sections suivantes.
             \begin{itemize}
                 \item Le calcul du syndrome.
                 \item La look up table.
@@ -104,7 +104,7 @@
             blocs sont relativement indépendants et peuvent être utilisés
             chacun séparément. Cela facilite, d'une part, le développement et
             le test, et d'autre part, la réutilisation du code développé. Un
-            codeur BCH pourrait par exemple réutiliser le block de calcul du
+            codeur BCH pourrait par exemple réutiliser le bloque de calcul du
             syndrome. La figure~\ref{fig:bch_blocks}
 
             \begin{figure}[H]
@@ -153,7 +153,7 @@
                     \draw (syndrome.Syndrome) +(0,0) node [anchor=south west] {10};
 
                 \end{tikzpicture}
-                \caption{Vue intérieure du block BCH}
+                \caption{Vue intérieure du bloque BCH}
                 \label{fig:bch_blocks}
             \end{figure}
 
@@ -348,16 +348,15 @@
             \subsection{Unité de contrôle}
             \label{sec:uc_syndrome}
 
-            L'unité de controle utilisé pour le calcul du syndrome est définie
-            par la machine à étât présenté en figure~\ref{fig:uc_syndrome_ext}
-            et \ref{fig:me_syndrome}.  Elle se base sur un compteur afin
-            d'autoriser le décalage et calcul du syndrome pendant les 31 coups
-            d'horloge nécéssaire. Après les 31 coups d'horloge le résultat est
-            conservé dans les registres permettants le calcul du syndrome. Il
-            sera conservé jusqua la prochaine demande de calcul de syndrome,
-            qui débutera par le chargement du registre à décalage avec les
-            données issues de la pile et par la remise à zéro des registres de
-            calculs du syndrome.
+            L'unité de contrôle utilisée pour le calcul du syndrome est définie
+            par la machine à états présenté en figure~\ref{fig:me_syndrome}.
+            Elle se base sur un compteur afin d'autoriser le décalage et calcul
+            du syndrome pendant les 31 coups d'horloge nécessaire. Après les 31
+            coups d'horloge le résultat est conservé dans les registres
+            permettant le calcul du syndrome. Il sera conservé jusqu'à la
+            prochaine demande de calcul de syndrome, qui débutera par le
+            chargement du registre à décalage avec les données issues de la
+            pile et par la remise à zéro des registres de calculs du syndrome.
 
             \begin{figure}[H]
                 \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm]
@@ -408,12 +407,12 @@
 
         \section{Look up table}
             La Look up table est décomposée en une unité de traitement et une
-            unité de controle qui sont présentées dans les
+            unité de contrôle qui sont présentées dans les
             sections~\ref{sec:ut_lut} et \ref{sec:uc_lut}.  Le principe de
             fonctionnement est celui présenté dans le sujet. Au démarrage, on
-            initialise 2 pointeurs P1 et P2 à 0 et 1 puis on incremente P2
+            initialise 2 pointeurs P1 et P2 à 0 et 1 puis on incrémente P2
             jusqu'à 31, à chaque fois en comparant $LUT[P2]$ et $LUT[P1] \oplus
-            LUT[P2]$ au syndrome. Si on ne trouve pas le syndrome, on incremente
+            LUT[P2]$ au syndrome. Si on ne trouve pas le syndrome, on incrémente
             P1 et on remet P2 à $P1 + 1$.  Lorsque P1 vaut 31, ça signifier que
             le message comporte plus de deux erreurs. Si $LUT[P1] == syndrome$,
             il y a une erreur à la position P1, si $LUT[P1] \oplus LUT[P2] ==
@@ -421,14 +420,14 @@
 
             Le bloc dispose d'une entrée «~Syndrome~», de 3 sorties, le nombre
             d'erreurs «~err~», «~P1~» et «~P2~» les positions des erreurs si
-            detectées.
+            détectées.
 
             \subsection{Unité de traitement}
-                L'unité de traitement est prsentée en section~\ref{fig:ut_lut}.
+                L'unité de traitement est présentée en section~\ref{fig:ut_lut}.
                 Elle est composée des deux registres P1 et P2, d'une LUT et
                 d'un registre dans lequel est sauvegardé le syndrome.  Les
                 sorties «~ERR1~» et «~ERR2~» sont mises à 1 lorsqu'une ou deux
-                erreurs ont été détéctées. Les sorties P1\_MAX et P2\_MAX sont
+                erreurs ont été détectées. Les sorties P1\_MAX et P2\_MAX sont
                 mises à 1 lorsque P1 ou P2 ont atteint leur valeur maximum.
 
             \label{sec:ut_lut}
@@ -509,8 +508,8 @@
 
             \subsection{Unité de controle}
             \label{sec:uc_lut}
-            L'unité de controle est définie par la machine à état présentée en figure~\ref{fig:uc_lut}.
-            Elle est chargée de controller l'incrementation de P1 et P2 et le
+            L'unité de contrôle est définie par la machine à état présentée en figure~\ref{fig:uc_lut}.
+            Elle est chargée de contrôler l'incrémentation de P1 et P2 et le
             chargement du code de l'erreur dans le registre «~err~».
 
             \begin{figure}[H]
@@ -711,7 +710,7 @@
                 parcourir les 21 bits d'information en les décalant.
                 Lorsque les 21 coups d'horloge ont été réalisés, elle signale
                 la fin du processus de correction et met l'unité de traitement
-                en mode Idle. Elle y restera jusqu'à ce qu'elle recoive le
+                en mode Idle. Elle y restera jusqu'à ce qu'elle reçoive le
                 signal start\_corr de la part de la machine à état principale.
             \begin{figure}[H]
                 \centering
@@ -772,15 +771,15 @@
         \section{Interface Avalon}
             Afin d'abstraire l'utilisation de l'interface avalon nous
             définissons un bloque responsable des gérer tous les registres et
-            d'assembler les bus de donnée spécifié par le cahie des charges.
+            d'assembler les bus de donnée spécifié par le cahier des charges.
 
             \subsection{Vue extérieure}
             Du point de vue extérieur le bloque Avalon a plusieurs entrées
-            sorties que l'on regroupe en deux types: Les entrées et sortites
-            spécifié par l'interface avalon de nios et les entrée sorties
-            spécialisés utilisée en interne par composant. Ces groupes sont
-            présenté respectivement à gauche et droite du bloque avalon dont le
-            schéma est présenté en figure~\ref{fig:int_avalon}.
+            sorties que l'on regroupe en deux types: Les entrées et sorties
+            spécifié par l'interface avalon et les entrée sorties spécialisés
+            utilisée en interne par composant. Ces groupes sont présenté
+            respectivement à gauche et droite du bloque avalon dont le schéma
+            est présenté en figure~\ref{fig:int_avalon}.
 
             \begin{figure}[H]
                 \centering
@@ -804,29 +803,29 @@
                     \draw[->] (avalon.Decode) -- +(2, 0) node[anchor=west] {Decode};
 
                 \end{tikzpicture}
-                \caption{Vue extérieur du block avalon}
+                \caption{Vue extérieur du bloque avalon}
                 \label{fig:int_avalon}
             \end{figure}
 
             \subsection{Schéma fonctionnel}
 
-            La fugure~\ref{fig:avalon_fonc} présente le shéma interne du bloc
+            La figure~\ref{fig:avalon_fonc} présente le schéma interne du bloc
             avalon. On y trouve en premier lieux tous les signaux d'entrées et
-            sortie de l'interface Avalon Nios II à gauche et tous les signaux
-            d'entrée sortie interne au bloque BCH à droite. Les liaisons se
-            lisent de la même façon que dans Qsys. On trouve ensuite un
-            décodeur d'adresse, block combinatoire qui permet de transformer
-            l'adresse donné au block avalon en une selection de registre de
-            status, controle ou donnée. La pile Fifo est intégrée au bloque
-            avalon car elle sert à la communication bidirectionelle avec
-            l'interface avalon. De pari avec la pile on trouve un compteur
-            donnant le nombre de messages à traiter au démarage du BCH. Le
-            compteur est nécéssaire car la pile d'envoi et de réception est
-            partagée et qu'il n'est donc pas possible de ce fier au niveau de
-            la Fifo. On trouve les registres permettant de conserver les
-            informations des différents registres. Enfin on trouve l'assemblage
-            des valeurs pour les bus de données et le multiplexeur qui permet de
-            selectionner le bus relié au bus de données de l'interface avalon.
+            sortie de l'interface Avalon à gauche et tous les signaux d'entrée
+            sortie interne au bloque BCH à droite. Les liaisons se lisent de la
+            même façon que dans Qsys. On trouve ensuite un décodeur d'adresse,
+            bloque combinatoire qui permet de transformer l'adresse donné au
+            bloque avalon en une sélection de registre de statu, contrôle ou
+            donnée. La pile Fifo est intégrée au bloque avalon car elle sert à
+            la communication bidirectionnelle avec l'interface avalon. De pair
+            avec la pile on trouve un compteur donnant le nombre de messages à
+            traiter au démarrage du BCH. Le compteur est nécéssaire car la pile
+            d'envoi et de réception est partagée et qu'il n'est donc pas
+            possible de ce fier au niveau de la Fifo. On trouve les bascules
+            permettant de conserver les informations des différents registres.
+            Enfin on trouve l'assemblage des valeurs pour les bus de données et
+            le multiplexeur qui permet de sélectionner le registre relié au bus de
+            données de l'interface avalon.
 
             \begin{figure}[H]
                 \centering
@@ -952,10 +951,10 @@
 
             \paragraph{}
             L'unité de contrôle embarque un décompteur pour attendre les 31
-            coups d'horloge nécéssaire au calcul du syndrome par l'unité de
+            coups d'horloge nécessaire au calcul du syndrome par l'unité de
             traitement. Pour cela la partie décompteur est isolée dans un
             processus sensible uniquement à l'horloge. Le processus principal,
-            gerrant les entrées et sorties en fonction des états, échange des
+            gérant les entrées et sorties en fonction des états, échange des
             ordres avec le processus de décomptage par l'intermédiaire de trois
             signaux internes:
             \begin{itemize}
@@ -968,9 +967,9 @@
             \paragraph{}
             La validation du calcul de syndrome est faite à partir des exemples
             du sujet. On place en entrée la valeur \verb$0x435A0BD5$ et on
-            s'attend à obtenir un syndrome de 0 apres les 31 coups d'horloge.
+            s'attend à obtenir un syndrome de 0 après les 31 coups d'horloge.
             On place ensuite des valeurs ayant des erreur et on vérifie que les
-            syndromes sont non null (voir figure~\ref{fig:sim_syndrome}). La
+            syndromes sont non nul (voir figure~\ref{fig:sim_syndrome}). La
             validité du syndrome dans la Look Up Table peut être vérifié
             manuellement et sera vérifiée automatiquement par la suite de test
             de l'assemblage syndrome/lut.
@@ -1045,7 +1044,7 @@
                 \end{itemize}
 
             \paragraph{}
-                Le contrôle des registres de décalage et de recompostion
+                Le contrôle des registres de décalage et de recomposition
                 s'effectue grâce aux signaux suivants :
                  \begin{itemize}
                     \item \verb|DEC_BUF| pour que le registre contenant le
@@ -1059,9 +1058,9 @@
 
             \paragraph{}
                 La validation du correcteur s'effectue en donnant le message de
-                l'example, sans erreur, et en lui modifiant d'abord un, puis
+                l'exemple, sans erreur, et en lui modifiant d'abord un, puis
                 plusieurs bits. On s'attend ensuite à récupérer le message de
-                l'example, donc corrigé par le module. On peut vérifier ce
+                l'exemple, donc corrigé par le module. On peut vérifier ce
                 fonctionnement pour une et deux erreurs. Dans le cas ou il n'y
                 a pas d'erreurs, le message n'est bien évidemment pas modifié.
                 Lorsque plus de 2 erreurs sont présentes, le message est
@@ -1150,7 +1149,7 @@
     \chapter{Spécification du composant librairie}
         \paragraph{}
             Les différentes figures qui suivent, décrivent les diverses
-            parties du composant de librairie issu du code vhd. On pourra y
+            parties du composant de librairie issu du code vhdl. On pourra y
             voir les caractéristiques et les connexions des différents signaux
             notables du module BCH que nous avons créé.
 
@@ -1171,7 +1170,7 @@
         \begin{figure}[H]
             \centering
             \includegraphics[width=\textwidth]{./images/BCH_0_parameters}
-            \caption{Paramètres de synthétisation du composant BCH}
+            \caption{Paramètres de synthèse du composant BCH}
             \label{fig:BCH_0_parameters}
         \end{figure}
 
@@ -1199,15 +1198,15 @@
     \chapter{Présentation de l'API c}
 
     Maintenant que le composant bibliothèque est implémenté et que le projet
-    quartus est compilé et flashé il est nécéssaire d'implementer une api
-    permettant d'utiliser le composant de facon assez confortable. L'api que
-    nous proposont est assez riche.
+    quartus est compilé et flashé il est nécessaire d'implémenter une api
+    permettant d'utiliser le composant de façon assez confortable. L'api que
+    nous proposons est assez riche.
 
     \section{Structure de donnée}
 
     Inclue en annexe~\ref{ann:api_h}, nous avons écrit une structure qui permet
     de récupérer une paire, message et erreur. Le message présent dans la
-    sructure est le message corrigé si possible et le champ erreur permet de
+    structure est le message corrigé si possible et le champ erreur permet de
     connaitre le nombre d'erreurs détectés.
 
     \section{Définition de l'API}
@@ -1217,38 +1216,38 @@
 
     \subsection{Envoi et récupération de messages}
 
-    Deux fonctins permettent l'échange de message à corriger et corrigé. Il
+    Deux fonctions permettent l'échange de message à corriger et corrigé. Il
     s'agit de \verb$BCH_push_msg$ et \verb$BCH_pop_msg$. La première envoie un
     message à corriger sous forme d'entier non signé et la seconde récupère un
     message corrigé sous forme de structure \verb$bch_msg$.
 
-    \subsection{Lecture du registre de status}
+    \subsection{Lecture du registre de statu}
 
-    La lecture du status ce fait avec la fonction \verb$BCH_read_status$ qui
-    renvoi la valeur non signé présente sur le bus de status. L'utilisateur à
-    alors la responsabilité d'utilisé les opérateurs logique «~et~» et «~ou~»
-    afin de récupérer la valeur qui l'intéresse dans le status. Si une seule
+    La lecture du statu ce fait avec la fonction \verb$BCH_read_status$ qui
+    renvoi la valeur non signé présente sur le bus de statu. L'utilisateur à
+    alors la responsabilité d'utiliser les opérateurs logique «~et~» et «~ou~»
+    afin de récupérer la valeur qui l'intéresse dans le statu. Si une seule
     valeur l'intéresse, ou que le cout de lecture répété d'un registre n'est
     pas dérangeant l'utilisateur dispose de fonctions racourcis pui permettent
-    d'acceder à une information ciblé du status~:
+    d'accéder à une information ciblé du statu~:
     \begin{itemize}
-        \item \verb$BCH_is_full$ nous donne si la pile est pleinne
+        \item \verb$BCH_is_full$ nous donne si la pile est pleine
         \item \verb$BCH_is_empty$ nous donne si la pile est vide ou non
         \item \verb$BCH_is_irq$ nous donne si le traitement est terminé
     \end{itemize}
 
-    \subsection{Lecture et écriture du registre de controle}
+    \subsection{Lecture et écriture du registre de contrôle}
 
-    De la même manière que pour le registre de status l'utilisteur dispose des
+    De la même manière que pour le registre de statu l'utilisateur dispose des
     fonctions \verb$BCH_read_ctrl$ et de \verb$BCH_write_ctrl$. Et de même il
-    peut utiliser des fonctions racourcis pour lire et changer des valeurs sans
-    avoir a manipuler manuellement le registre de controle. Les fonctions sont
+    peut utiliser des fonctions raccourcis pour lire et changer des valeurs sans
+    avoir a manipuler manuellement le registre de contrôle. Les fonctions sont
     les suivantes~:
     \begin{itemize}
         \item \verb$BCH_is_irq_enabled$ qui permet de savoir si les irq sont activé ou non
-        \item \verb$BCH_is_decoding$ qui permet de savoir si le decodeur est en marche
+        \item \verb$BCH_is_decoding$ qui permet de savoir si le décodeur est en marche
         \item \verb$BCH_ack_irq$ qui permet de désarmer une interruption
-        \item \verb$BCH_enable_irq$ qui petmet d'activer les interruptions
+        \item \verb$BCH_enable_irq$ qui permet d'activer les interruptions
         \item \verb$BCH_isable_irq$ qui permet de désactiver les interruptions
         \item \verb$BCH_start$ qui permet de lancer le décodage
     \end{itemize}
@@ -1262,7 +1261,7 @@
         d'appel de la routine d'interruption, si celle-ci à été préalablement
         autorisée. Nous envoyons deux séries de 4 messages, chacune allant
         progressivement de 0 erreurs pour le premier message, à trois erreurs
-        pour le quatrième. Dans les trois premiers cas, on s'attends à ce que
+        pour le quatrième. Dans les trois premiers cas, on s'attend à ce que
         au final, le bon message soit récupéré. Le dernier cependant,
         comportant trois erreurs, ne sera pas corrigé. Cela est du au fait que
         ce modèle de BCH ne peut corriger que deux erreurs au maximum, et en
@@ -1280,7 +1279,7 @@
         BCH, mais cette fois ci, les demandes d'interruptions seront
         désactivées. Lorsque le BCH aura terminé le traitement des messages,
         le drapeau de demande d'interruption se lèvera bien de nouveau, mais
-        la routine d'interruption ne sera pas déclanchée. C'est donc bien le
+        la routine d'interruption ne sera pas déclenchée. C'est donc bien le
         fonctionnement souhaité qui est réalisé. Afin d'être certain que les
         messages ont cependant bien été traités, à la suite de la levée du
         drapeau de demande d'interruption du BCH, nous venons vider la pile
