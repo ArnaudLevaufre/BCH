@@ -1163,18 +1163,6 @@
                     \label{fig:sim_bch}
                 \end{figure}
 
-    \chapter{Synthèse logique et simulation structurelle}
-        \paragraph{}
-            La figure ~\ref{fig:BCH_0_component} montre le module $BCH_0$, dans
-            la liste des modules synthétisés qui seront chargés sur le processeur.
-
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=\textwidth]{./images/BCH_0_component}
-            \caption{Composant BCH ajouté aux modules du processeur}
-            \label{fig:BCH_0_component}
-        \end{figure}
-
     \chapter{Spécification du composant librairie}
         \paragraph{}
             Les différentes figures qui suivent, décrivent les diverses
@@ -1223,6 +1211,29 @@
             \caption{Paramètres du signal de reset connecté au BCH}
             \label{fig:reset_sink}
         \end{figure}
+
+    \chapter{Synthèse logique et simulation structurelle}
+        \paragraph{}
+        La figure ~\ref{fig:BCH_0_component} montre le composant $BCH_0$, dans
+        la liste des composants synthétisés qui seront chargés sur le FPGA.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{./images/BCH_0_component}
+            \caption{Composant BCH ajouté aux modules du processeur}
+            \label{fig:BCH_0_component}
+        \end{figure}
+
+        \paragraph{}
+        La compilation du projet avec le composant BCH nous à d'abord révélé
+        des erreurs simples dans le code VHDL qui aboutissaient à la création
+        de Latch. Après vérification et relecture du code les soucis venaient
+        d'oublis du signal d'horloge dans la liste de sensibilités de certains
+        processus.
+
+        \paragraph{}
+        La simulation structurelle montre que notre implémentation
+        du BCH est viable et conforme au cahier des charges.
 
     \chapter{Présentation de l'API c}
 
