@@ -48,14 +48,14 @@
     redondance forment un mot de 31 bits auquel on ajoute un bit 0 en poids fort
     pour former un mot de 32 bits. Le décodeur doit implémenter une interface
     avalon le rendant compatible avec le processeur NiosII. Les communications
-    entre le décodeur et le processeur se fait par quatre registres: les
+    entre le décodeur et le processeur se fait par quatre registres~: les
     registres de statu, de contrôle, de donnée d'entrée et de sortie. Ces
     registres ont un format de 32 bits.
 
     \paragraph{}
     Pour la lecture de ce rapport, il est important de noter plusieurs points
     sur les schémas fonctionnels présentés. La connexion entre deux câbles
-    croisés est représenté par un points. Deux câbles croisés sans points ne se
+    croisés est représenté par un point. Deux câbles croisés sans points ne se
     connectent pas. Les entrées d'horloge et de reset sont présents sur les
     bloques qui en ont besoins mais ne sont pas câblés sur les schémas pour
     faciliter la lecture. Toute entrée reset et Clk est par défaut et sauf
@@ -64,7 +64,7 @@
 
     \chapter{Étude du circuit}
         \section{Architecture globale}
-        La vue extérieur du décodeur BCH est imposée par le sujet et est
+        La vue extérieure du décodeur BCH est imposée par le sujet et est
         présentée dans la figure~\ref{fig:bch} ci-dessous. Sa structure
         interne est présentée dans la section~\ref{sec:fonc_bch}. On
         retrouve les entrées et sorties nécessaires pour définir une
@@ -85,11 +85,11 @@
                     \draw[->] (bch.Irqn) -- +(1, 0) node[anchor=west] {Irq\_n};
 
                 \end{tikzpicture}
-                \caption{Vue extérieur du bloques BCH}
+                \caption{Vue extérieur du bloc BCH}
                 \label{fig:bch}
             \end{figure}
 
-            \subsection{Sous ensembles fonctionnels du bloque BCH}
+            \subsection{Sous ensembles fonctionnels du bloc BCH}
             \label{sec:fonc_bch}
             La réalisation du décodeur BCH se base sur cinq bloques présentés
             dans les sections suivantes.
@@ -153,11 +153,11 @@
                     \draw (syndrome.Syndrome) +(0,0) node [anchor=south west] {10};
 
                 \end{tikzpicture}
-                \caption{Vue intérieure du bloque BCH}
+                \caption{Vue intérieure du bloc BCH}
                 \label{fig:bch_blocks}
             \end{figure}
 
-            \subsection{Machine à état principale}
+            \subsection{Machine à états principale}
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm, scale=0.75, every node/.style={scale=0.75}]
@@ -185,7 +185,7 @@
 
 
                 \end{tikzpicture}
-                \caption{Machine à état globale}
+                \caption{Machine à états globale}
                 \label{fig:me_syndrome}
             \end{figure}
 
@@ -370,7 +370,7 @@
                     \path[->] (E2) edge [bend left] node {syn\_dcpt == 0 / end\_syndrome} (E1);
 
                 \end{tikzpicture}
-                \caption{Machine à état utilisée pour le calcul du syndrome}
+                \caption{Machine à états utilisée pour le calcul du syndrome}
                 \label{fig:me_syndrome}
             \end{figure}
 
@@ -508,7 +508,7 @@
 
             \subsection{Unité de controle}
             \label{sec:uc_lut}
-            L'unité de contrôle est définie par la machine à état présentée en figure~\ref{fig:uc_lut}.
+            L'unité de contrôle est définie par la machine à états présentée en figure~\ref{fig:uc_lut}.
             Elle est chargée de contrôler l'incrémentation de P1 et P2 et le
             chargement du code de l'erreur dans le registre «~err~».
 
@@ -532,7 +532,7 @@
                     %\draw[-] (node cs:name=E2, angle=150) edge [bend left] node[pos=0.3, left] {p1\_max / end\_lut, ld\_err, err = "11"} (node cs:name=E1, angle=200);
 
                 \end{tikzpicture}
-                \caption{Machine à état utilisée pour le calcul du syndrome}
+                \caption{Machine à états utilisée pour le calcul du syndrome}
                 \label{fig:uc_lut}
             \end{figure}
 
@@ -581,7 +581,7 @@
         \section{Correcteur}
             Le correcteur est basé sur un registre à décalage laissant passer
             un à un les 21 bits d'information du message. Ceux-ci seront
-            corrigés, c'est à dire inversés, si leur position correspond avec
+            corrigés, c'est-à-dire inversés, si leur position correspond avec
             les valeurs P1 ou P2, à condition que des erreurs soient
             effectivement présentes. La position du bit en cours de décalage
             est donnée par un registre de comptage, qui permet également à
@@ -704,14 +704,14 @@
             \end{figure}
 
             \subsection{Unité de contrôle}
-                L'unité de de contrôle qui est utilisée pour la correction du
+                L'unité de contrôle qui est utilisée pour la correction du
                 message est représentée en figure~\ref{fig:uc_corr}.
                 Elle contrôle l'incrémentation du compteur Count afin de
                 parcourir les 21 bits d'information en les décalant.
                 Lorsque les 21 coups d'horloge ont été réalisés, elle signale
                 la fin du processus de correction et met l'unité de traitement
                 en mode Idle. Elle y restera jusqu'à ce qu'elle reçoive le
-                signal start\_corr de la part de la machine à état principale.
+                signal start\_corr de la part de la machine à états principale.
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=4cm]
@@ -728,7 +728,7 @@
                     \path[->] (E2) edge [bend left] node {Count = 21 / end\_corr} (E1);
 
                 \end{tikzpicture}
-                \caption{Machine à état utilisée pour la correction d'erreur}
+                \caption{Machine à états utilisée pour la correction d'erreur}
                 \label{fig:uc_corr}
             \end{figure}
 
@@ -770,15 +770,15 @@
 
         \section{Interface Avalon}
             Afin d'abstraire l'utilisation de l'interface avalon nous
-            définissons un bloque responsable des gérer tous les registres et
+            définissons un bloc responsable de gérer tous les registres et
             d'assembler les bus de donnée spécifié par le cahier des charges.
 
             \subsection{Vue extérieure}
             Du point de vue extérieur le bloque Avalon a plusieurs entrées
-            sorties que l'on regroupe en deux types: Les entrées et sorties
+            sorties que l'on regroupe en deux types~: Les entrées et sorties
             spécifié par l'interface avalon et les entrée sorties spécialisés
-            utilisée en interne par composant. Ces groupes sont présenté
-            respectivement à gauche et droite du bloque avalon dont le schéma
+            utilisée en interne par composant. Ces groupes sont présentés
+            respectivement à gauche et droite du bloc avalon dont le schéma
             est présenté en figure~\ref{fig:int_avalon}.
 
             \begin{figure}[H]
@@ -810,16 +810,16 @@
             \subsection{Schéma fonctionnel}
 
             La figure~\ref{fig:avalon_fonc} présente le schéma interne du bloc
-            avalon. On y trouve en premier lieux tous les signaux d'entrées et
+            avalon. On y trouve en premier lieu tous les signaux d'entrées et
             sortie de l'interface Avalon à gauche et tous les signaux d'entrée
-            sortie interne au bloque BCH à droite. Les liaisons se lisent de la
+            sortie interne au bloc BCH à droite. Les liaisons se lisent de la
             même façon que dans Qsys. On trouve ensuite un décodeur d'adresse,
-            bloque combinatoire qui permet de transformer l'adresse donné au
-            bloque avalon en une sélection de registre de statu, contrôle ou
-            donnée. La pile Fifo est intégrée au bloque avalon car elle sert à
+            bloc combinatoire qui permet de transformer l'adresse donné au
+            bloc avalon en une sélection de registre de statu, contrôle ou
+            donnée. La pile Fifo est intégrée au bloc avalon car elle sert à
             la communication bidirectionnelle avec l'interface avalon. De pair
             avec la pile on trouve un compteur donnant le nombre de messages à
-            traiter au démarrage du BCH. Le compteur est nécéssaire car la pile
+            traiter au démarrage du BCH. Le compteur est nécessaire car la pile
             d'envoi et de réception est partagée et qu'il n'est donc pas
             possible de ce fier au niveau de la Fifo. On trouve les bascules
             permettant de conserver les informations des différents registres.
@@ -956,7 +956,7 @@
             processus sensible uniquement à l'horloge. Le processus principal,
             gérant les entrées et sorties en fonction des états, échange des
             ordres avec le processus de décomptage par l'intermédiaire de trois
-            signaux internes:
+            signaux internes~:
             \begin{itemize}
                 \item \verb$dec_init$ ordonne l'initialisation du décompteur.
                 \item \verb$dec$ ordonne le décomptage.
@@ -991,7 +991,7 @@
                 L'unité de traitement est composé d'un unique processus, sensible
                 uniquement à l'horloge qui est chargé de la gestion P1 ou P2 en
                 fonction des signaux venant de l'unité de contrôle.
-                Elle possède aussi les sorties combinatoires suivantes:
+                Elle possède aussi les sorties combinatoires suivantes~:
                 \begin{itemize}
                     \item \verb|P1_MAX| indiquant si le pointeur 1 a atteint sa valeur maximale
                     \item \verb|P2_MAX| indiquant si le pointeur 2 a atteint sa valeur maximale
@@ -1000,7 +1000,7 @@
                 \end{itemize}
 
             \paragraph{}
-                Le contrôle de P1 et de P2 se fait via les signaux internes suivants:
+                Le contrôle de P1 et de P2 se fait via les signaux internes suivants~:
                 \begin{itemize}
                     \item \verb|INC_P1| pour incrémenter P1
                     \item \verb|INC_P2| pour incrémenter P2
@@ -1014,7 +1014,7 @@
                 pour le syndrome \verb|0000110010|, on vérifie que l'on obtient
                 bien 2 erreurs, aux positions 15 et 18. Le même genre de test
                 est effectué pour les cas extrêmes. Ce cas et les signaux
-                intéressants sont présentés en figure \ref{fig:sim_lut}.
+                intéressants sont présentés en figure~\ref{fig:sim_lut}.
 
                 \begin{figure}[H]
                     \centering
@@ -1035,7 +1035,7 @@
                 uniquement sensible à l'horloge. Il se charge du compteur
                 interne ainsi que des divers signaux de chargement et de
                 décalage provenant de l'unité de contrôle.
-                Elle possède aussi deux sorties combinatoires :
+                Elle possède aussi deux sorties combinatoires~:
                  \begin{itemize}
                     \item \verb|D_CORR_OUT| pour rendre le résultat final de la
                         correction du message disponible dans le système principal.
@@ -1045,7 +1045,7 @@
 
             \paragraph{}
                 Le contrôle des registres de décalage et de recomposition
-                s'effectue grâce aux signaux suivants :
+                s'effectue grâce aux signaux suivants~:
                  \begin{itemize}
                     \item \verb|DEC_BUF| pour que le registre contenant le
                         message à traiter réalise un décalage de 1 bit vers la
@@ -1151,7 +1151,7 @@
             \paragraph{}
                 La validation de l'assemblage complet est fait par une
                 simulation de notre programme de test en forçant les signaux à
-                la main .  On envoie des messages avec 3, 2, 1 et 0 erreurs et
+                la main.  On envoie des messages avec 3, 2, 1 et 0 erreurs et
                 on vérifie qu'on obtient bien une interruption et le message
                 corrigé si possible.  La vérification est visible en figure
                 \ref{fig:sim_bch}
@@ -1237,10 +1237,10 @@
 
     \chapter{Présentation de l'API c}
 
-    Maintenant que le composant bibliothèque est implémenté et que le projet
-    quartus est compilé et flashé il est nécessaire d'implémenter une api
-    permettant d'utiliser le composant de façon assez confortable. L'api que
-    nous proposons est assez riche.
+    Maintenant que le composant est implémenté et que le projet quartus est
+    compilé et flashé il est nécessaire d'implémenter une api permettant
+    d'utiliser le composant de façon assez confortable. L'api que nous
+    proposons est assez riche.
 
     \section{Structure de donnée}
 
@@ -1265,11 +1265,11 @@
 
     La lecture du statu ce fait avec la fonction \verb$BCH_read_status$ qui
     renvoi la valeur non signé présente sur le bus de statu. L'utilisateur à
-    alors la responsabilité d'utiliser les opérateurs logique «~et~» et «~ou~»
+    alors la responsabilité d'utiliser les opérateurs logiques «~et~» et «~ou~»
     afin de récupérer la valeur qui l'intéresse dans le statu. Si une seule
     valeur l'intéresse, ou que le cout de lecture répété d'un registre n'est
-    pas dérangeant l'utilisateur dispose de fonctions racourcis pui permettent
-    d'accéder à une information ciblé du statu~:
+    pas dérangeant l'utilisateur dispose de fonctions raccourcis pui permettent
+    d'accéder à une information ciblée du statu~:
     \begin{itemize}
         \item \verb$BCH_is_full$ nous donne si la pile est pleine
         \item \verb$BCH_is_empty$ nous donne si la pile est vide ou non
@@ -1281,7 +1281,7 @@
     De la même manière que pour le registre de statu l'utilisateur dispose des
     fonctions \verb$BCH_read_ctrl$ et de \verb$BCH_write_ctrl$. Et de même il
     peut utiliser des fonctions raccourcis pour lire et changer des valeurs sans
-    avoir a manipuler manuellement le registre de contrôle. Les fonctions sont
+    avoir à manipuler manuellement le registre de contrôle. Les fonctions sont
     les suivantes~:
     \begin{itemize}
         \item \verb$BCH_is_irq_enabled$ qui permet de savoir si les irq sont activé ou non
@@ -1298,25 +1298,25 @@
         \paragraph{}
         Dans le code applicatif présenté en annexe~\ref{ann:demo}, nous
         réalisons un test de fonctionnement des demandes d'interruptions et
-        d'appel de la routine d'interruption, si celle-ci à été préalablement
+        d'appel de la routine d'interruption, si celle-ci a été préalablement
         autorisée. Nous envoyons deux séries de 4 messages, chacune allant
-        progressivement de 0 erreurs pour le premier message, à trois erreurs
-        pour le quatrième. Dans les trois premiers cas, on s'attend à ce que
-        au final, le bon message soit récupéré. Le dernier cependant,
-        comportant trois erreurs, ne sera pas corrigé. Cela est du au fait que
-        ce modèle de BCH ne peut corriger que deux erreurs au maximum, et en
-        détecter jusqu'à cinq.
+        progressivement de 0 erreur pour le premier message, à trois erreurs
+        pour le quatrième. Dans les trois premiers cas, on s'attend à ce qu'au
+        final, le bon message soit récupéré. Le dernier cependant, comportant
+        trois erreurs, ne sera pas corrigé. Cela est due au fait que ce modèle
+        de BCH ne peut corriger que deux erreurs au maximum, et en détecter
+        jusqu'à cinq.
 
         \paragraph{}
-        La première série de message est donc donnée au BCH, qui une fois les
+        La première série de messages est donc donnée au BCH, qui une fois les
         interruptions autorisées, commencera à les traiter. Lorsque tous les
         messages ont été corrigés, le drapeau de demande d'interruption va se
         lever. Les interruptions étant activées, la routine sera lancée et
         videra la pile en nous faisant part des résultats.
 
         \paragraph{}
-        La deuxième série de message, identique à la première, sera passée au
-        BCH, mais cette fois ci, les demandes d'interruptions seront
+        La deuxième série de messages, identique à la première, sera passée au
+        BCH, mais cette fois-ci, les demandes d'interruptions seront
         désactivées. Lorsque le BCH aura terminé le traitement des messages,
         le drapeau de demande d'interruption se lèvera bien de nouveau, mais
         la routine d'interruption ne sera pas déclenchée. C'est donc bien le
@@ -1327,7 +1327,7 @@
         mêmes que précédemment.
 
         \paragraph{}
-        Le code applicatif présenté précédemment génère les sorties suivantes dans la console :
+        Le code applicatif présenté précédemment génère les sorties suivantes dans la console~:
 
         \paragraph{}
         \begin{minted}[linenos]{text}
