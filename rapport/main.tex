@@ -1065,9 +1065,38 @@
                 a pas d'erreurs, le message n'est bien évidemment pas modifié.
                 Lorsque plus de 2 erreurs sont présentes, le message est
                 corrigé, mais en un autre message, plus proche statistiquement
-                que le message d'origine.
+                que le message d'origine. Le fonctionnement de l'implémentation
+                VHDL est prouvé par les figures~\ref{fig:sim_corr_0},
+                \ref{fig:sim_corr_1}, \ref{fig:sim_corr_2},
+                \ref{fig:sim_corr_3} ci-dessous.
 
-                % TODO Screenshots des differents cas
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/corr_0_err.png}
+                    \caption{Effet de la correction lorsqu'il n'y a pas d'erreurs.}
+                    \label{fig:sim_corr_0}
+                \end{figure}
+
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/corr_1_err.png}
+                    \caption{Correction d'une erreur.}
+                    \label{fig:sim_corr_1}
+                \end{figure}
+
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/corr_2_err.png}
+                    \caption{Correction de deux erreurs.}
+                    \label{fig:sim_corr_2}
+                \end{figure}
+
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth]{./images/corr_2sup_err.png}
+                    \caption{Absence de correction pour plus de deux erreurs.}
+                    \label{fig:sim_corr_3}
+                \end{figure}
 
         \section{Interface Avalon}
             \paragraph{}
