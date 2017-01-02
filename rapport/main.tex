@@ -49,17 +49,17 @@
     pour former un mot de 32 bits. Le décodeur doit implémenter une interface
     avalon le rendant compatible avec le processeur NiosII. Les communications
     entre le décodeur et le processeur se fait par quatre registres~: les
-    registres de statu, de contrôle, de donnée d'entrée et de sortie. Ces
+    registres de statut, de contrôle, de donnée d'entrée et de sortie. Ces
     registres ont un format de 32 bits.
 
     \paragraph{}
     Pour la lecture de ce rapport, il est important de noter plusieurs points
     sur les schémas fonctionnels présentés. La connexion entre deux câbles
-    croisés est représenté par un point. Deux câbles croisés sans points ne se
-    connectent pas. Les entrées d'horloge et de reset sont présents sur les
+    croisés est représenté par un point. Deux câbles croisés sans points ne
+    sont pas connectés. Les entrées d'horloge et de reset sont présents sur les
     blocs qui en ont besoins mais ne sont pas câblés sur les schémas pour
     faciliter la lecture. Toute entrée reset et Clk est par défaut et sauf
-    indication contraire, considéré comme reliée à l'horloge et au reset
+    indication contraire, considérée comme reliée à l'horloge et au reset
     maitre. Les cas particuliers sont explicités.
 
     \chapter{Étude du circuit}
@@ -414,7 +414,7 @@
             initialise 2 pointeurs P1 et P2 à 0 et 1 puis on incrémente P2
             jusqu'à 31, à chaque fois en comparant $LUT[P2]$ et $LUT[P1] \oplus
             LUT[P2]$ au syndrome. Si on ne trouve pas le syndrome, on incrémente
-            P1 et on remet P2 à $P1 + 1$.  Lorsque P1 vaut 31, ça signifier que
+            P1 et on remet P2 à $P1 + 1$.  Lorsque P1 vaut 31, ça signifie que
             le message comporte plus de deux erreurs. Si $LUT[P1] == syndrome$,
             il y a une erreur à la position P1, si $LUT[P1] \oplus LUT[P2] ==
             syndrome$ alors il y a deux erreurs, aux positions P1 et P2.
@@ -816,7 +816,7 @@
             sortie interne au bloc BCH à droite. Les liaisons se lisent de la
             même façon que dans Qsys. On trouve ensuite un décodeur d'adresse,
             bloc combinatoire qui permet de transformer l'adresse donné au
-            bloc avalon en une sélection de registre de statu, contrôle ou
+            bloc avalon en une sélection de registre de statut, contrôle ou
             donnée. La pile Fifo est intégrée au bloc avalon car elle sert à
             la communication bidirectionnelle avec l'interface avalon. De pair
             avec la pile on trouve un compteur donnant le nombre de messages à
@@ -1261,15 +1261,15 @@
     message à corriger sous forme d'entier non signé et la seconde récupère un
     message corrigé sous forme de structure \verb$bch_msg$.
 
-    \subsection{Lecture du registre de statu}
+    \subsection{Lecture du registre de statut}
 
-    La lecture du statu ce fait avec la fonction \verb$BCH_read_status$ qui
-    renvoi la valeur non signé présente sur le bus de statu. L'utilisateur à
+    La lecture du statut ce fait avec la fonction \verb$BCH_read_status$ qui
+    renvoi la valeur non signé présente sur le bus de statut. L'utilisateur à
     alors la responsabilité d'utiliser les opérateurs logiques «~et~» et «~ou~»
-    afin de récupérer la valeur qui l'intéresse dans le statu. Si une seule
+    afin de récupérer la valeur qui l'intéresse dans le statut. Si une seule
     valeur l'intéresse, ou que le cout de lecture répété d'un registre n'est
     pas dérangeant l'utilisateur dispose de fonctions raccourcis qui permettent
-    d'accéder à une information ciblée du statu~:
+    d'accéder à une information ciblée du statut~:
     \begin{itemize}
         \item \verb$BCH_is_full$ nous donne si la pile est pleine
         \item \verb$BCH_is_empty$ nous donne si la pile est vide ou non
@@ -1278,7 +1278,7 @@
 
     \subsection{Lecture et écriture du registre de contrôle}
 
-    De la même manière que pour le registre de statu l'utilisateur dispose des
+    De la même manière que pour le registre de statut l'utilisateur dispose des
     fonctions \verb$BCH_read_ctrl$ et de \verb$BCH_write_ctrl$. Et de même il
     peut utiliser des fonctions raccourcis pour lire et changer des valeurs sans
     avoir à manipuler manuellement le registre de contrôle. Les fonctions sont
