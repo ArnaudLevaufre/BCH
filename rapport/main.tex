@@ -105,7 +105,8 @@
             chacun séparément. Cela facilite, d'une part, le développement et
             le test, et d'autre part, la réutilisation du code développé. Un
             codeur BCH pourrait par exemple réutiliser le bloc de calcul du
-            syndrome. La figure~\ref{fig:bch_blocks}
+            syndrome. La figure~\ref{fig:bch_blocks} présente la vue intérieure
+            du bloc BCH.
 
             \begin{figure}[H]
                 \centering
@@ -423,7 +424,7 @@
             détectées.
 
             \subsection{Unité de traitement}
-                L'unité de traitement est présentée en section~\ref{fig:ut_lut}.
+                L'unité de traitement est présentée en figure~\ref{fig:ut_lut}.
                 Elle est composée des deux registres P1 et P2, d'une LUT et
                 d'un registre dans lequel est sauvegardé le syndrome.  Les
                 sorties «~ERR1~» et «~ERR2~» sont mises à 1 lorsqu'une ou deux
@@ -722,9 +723,9 @@
                     \node[right of=E1, right=-3.5cm]{Raz};
 
                     \path[->] (E1) edge [loop above] node {!start\_corr} (E1);
-                    \path[->] (E1) edge node {start\_corr / ld\_buff} (E2);
+                    \path[->] (E1) edge node {start\_corr / ld\_buff, Count = 0} (E2);
 
-                    \path[->] (E2) edge [loop right] node {Count != 21 / Dec\_buf, Ld\_corr} (E2);
+                    \path[->] (E2) edge [loop right] node {Count != 21 / Dec\_buf, Ld\_corr, Count++} (E2);
                     \path[->] (E2) edge [bend left] node {Count = 21 / end\_corr} (E1);
 
                 \end{tikzpicture}
@@ -777,9 +778,9 @@
             Du point de vue extérieur le bloc Avalon a plusieurs entrées
             sorties que l'on regroupe en deux types~: Les entrées et sorties
             spécifié par l'interface avalon et les entrée sorties spécialisés
-            utilisée en interne par composant. Ces groupes sont présentés
-            respectivement à gauche et droite du bloc avalon dont le schéma
-            est présenté en figure~\ref{fig:int_avalon}.
+            utilisée en interne pour le fonctionnement du BCH. Ces groupes sont
+            présentés respectivement à gauche et droite du bloc avalon dont le
+            schéma est présenté en figure~\ref{fig:int_avalon}.
 
             \begin{figure}[H]
                 \centering
@@ -1063,12 +1064,11 @@
                 l'exemple, donc corrigé par le module. On peut vérifier ce
                 fonctionnement pour une et deux erreurs. Dans le cas ou il n'y
                 a pas d'erreurs, le message n'est bien évidemment pas modifié.
-                Lorsque plus de 2 erreurs sont présentes, le message est
-                corrigé, mais en un autre message, plus proche statistiquement
-                que le message d'origine. Le fonctionnement de l'implémentation
-                VHDL est prouvé par les figures~\ref{fig:sim_corr_0},
-                \ref{fig:sim_corr_1}, \ref{fig:sim_corr_2},
-                \ref{fig:sim_corr_3} ci-dessous.
+                La présence de plus de deux erreurs ne modifie pas la donnée
+                mais ajoute l'information de leurs présence dans le message de
+                sortie. Le fonctionnement de l'implémentation VHDL est prouvé
+                par les figures~\ref{fig:sim_corr_0}, \ref{fig:sim_corr_1},
+                \ref{fig:sim_corr_2}, \ref{fig:sim_corr_3} ci-dessous.
 
                 \begin{figure}[H]
                     \centering
@@ -1102,7 +1102,7 @@
             \paragraph{}
                 L'interface avalon permet de s'interfacer avec le processeur. Cette
                 partie n'a pas posé de problème particulier. Le code est disponible en annexe
-                \ref{ann:vdhl_avalon}
+                \ref{ann:vhdl_avalon}
 
             \paragraph{}
                 L'interface avalon est composée d'un processus réagissant à
@@ -1239,8 +1239,8 @@
 
     Maintenant que le composant est implémenté et que le projet quartus est
     compilé et flashé il est nécessaire d'implémenter une api permettant
-    d'utiliser le composant de façon assez confortable. L'api que nous
-    proposons est assez riche.
+    d'utiliser le composant de façon confortable. L'api que nous proposons est
+    assez riche.
 
     \section{Structure de donnée}
 
@@ -1268,7 +1268,7 @@
     alors la responsabilité d'utiliser les opérateurs logiques «~et~» et «~ou~»
     afin de récupérer la valeur qui l'intéresse dans le statu. Si une seule
     valeur l'intéresse, ou que le cout de lecture répété d'un registre n'est
-    pas dérangeant l'utilisateur dispose de fonctions raccourcis pui permettent
+    pas dérangeant l'utilisateur dispose de fonctions raccourcis qui permettent
     d'accéder à une information ciblée du statu~:
     \begin{itemize}
         \item \verb$BCH_is_full$ nous donne si la pile est pleine
@@ -1288,7 +1288,7 @@
         \item \verb$BCH_is_decoding$ qui permet de savoir si le décodeur est en marche
         \item \verb$BCH_ack_irq$ qui permet de désarmer une interruption
         \item \verb$BCH_enable_irq$ qui permet d'activer les interruptions
-        \item \verb$BCH_isable_irq$ qui permet de désactiver les interruptions
+        \item \verb$BCH_disable_irq$ qui permet de désactiver les interruptions
         \item \verb$BCH_start$ qui permet de lancer le décodage
     \end{itemize}
 
